@@ -1,49 +1,43 @@
-const Validator = require("validator");
+const validator = require("validator");
 const isEmpty = require("is-empty");
 
-module.exports = function check_register_data(data) {
+module.exports = function check_vendor_register_data(data) {
   // replace the empty with null strings for the validator to be able to work
   // required field
   let flag = false;
-  if (isEmpty(data.manager_name) == false) {
+  if (isEmpty(data.manager_name)) {
     data.manager_name = "";
   }
   // required
-  if (isEmpty(data.email) == false) {
+  if (isEmpty(data.email)) {
     data.email = "";
   }
   // required
-  if (isEmpty(data.shop_name) == false) {
+  if (isEmpty(data.shop_name)) {
     data.shop_name = "";
   }
   // required
-  if (isEmpty(data.contact_number) == false) {
-    data.contact_number = "";
+  if (isEmpty(data.contact_number)) {
+    data.contact_number = 0;
   }
   // required
-  if (isEmpty(data.open_time) == false) {
+  if (isEmpty(data.open_time)) {
     data.open_time = "";
   }
   // required
-  if (isEmpty(data.password) == false) {
+  if (isEmpty(data.password)) {
     data.password = "";
   }
-  if (isEmpty(data.confirm_password) == false) {
-    data.confirm_password = "";
-  }
   // required
-  if (isEmpty(data.close_time) == false) {
+  if (isEmpty(data.close_time)) {
     data.close_time = "";
   }
-
   // Create a variable to store errors
   let errors = {};
-
   if (validator.isEmpty(data.manager_name)) {
     flag = true;
     errors.manager_name = "Manager-Name Field Empty";
   }
-
   if (validator.isEmpty(data.email)) {
     flag = true;
     errors.email = "Email Field Empty";
@@ -51,12 +45,10 @@ module.exports = function check_register_data(data) {
     flag = true;
     errors.email = "Enter a valid Email address";
   }
-
   if (validator.isEmpty(data.shop_name)) {
     flag = true;
     errors.shop_name = "Shop-Name Field Empty";
   }
-
   if (validator.isEmpty(data.contact_number)) {
     flag = true;
     errors.contact_number = "Contact-Number Field Empty";
@@ -67,19 +59,11 @@ module.exports = function check_register_data(data) {
   }
   if (validator.isEmpty(data.close_time)) {
     flag = true;
-    errors.close_time = "Close-Time Field Empty";
+    errors.close_time = "Close Time Field Empty";
   }
   if (validator.isEmpty(data.password)) {
     flag = true;
     errors.password = "Password Field Empty";
   }
-  if (validator.isEmpty(data.confirm_password)) {
-    flag = true;
-    errors.confirm_password = "Field can't be Empty";
-  } else if (validator.isEqual(data.password, data.confirm_password) == false) {
-    flag = true;
-    errors.confirm_password = "Both Passwords should be the same";
-  }
-
-  return { errors, ret: !flag };
+  return { errors, valid_bit: !flag };
 };

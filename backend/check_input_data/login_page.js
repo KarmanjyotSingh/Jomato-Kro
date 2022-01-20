@@ -3,10 +3,10 @@ const isEmpty = require("is-empty");
 
 module.exports = function check_login_data(data) {
   let flag = false;
-  if (isEmpty(data.email) == false) {
+  if (isEmpty(data.email)) {
     data.email = "";
   }
-  if (isEmpty(data.password) == false) {
+  if (isEmpty(data.password)) {
     data.password = "";
   }
   let errors = {};
@@ -23,5 +23,5 @@ module.exports = function check_login_data(data) {
     errors.password = "Password Field Empty";
   }
 
-  return { errors, ret: !flag };
+  return { errors, valid_bit: !flag };
 };
