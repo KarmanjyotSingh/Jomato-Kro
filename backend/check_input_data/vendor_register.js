@@ -18,7 +18,7 @@ module.exports = function check_vendor_register_data(data) {
   }
   // required
   if (isEmpty(data.contact_number)) {
-    data.contact_number = 0;
+    data.contact_number = "";
   }
   // required
   if (isEmpty(data.open_time)) {

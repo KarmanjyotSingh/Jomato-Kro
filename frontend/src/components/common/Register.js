@@ -1,72 +1,44 @@
-import { useState } from "react";
-import axios from "axios";
+import * as React from "react";
+import Box from "@mui/material/Box";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 import Grid from "@mui/material/Grid";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
+import Vendor_Register from "./register_vendor";
+import Buyer_Register from "./register_buyer";
 
-const Register = (props) => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [date, setDate] = useState(null);
+export default function BasicSelect() {
+  const [user_type, set_user_type] = React.useState("");
 
-  const onChangeUsername = (event) => {
-    setName(event.target.value);
-  };
-
-  const onChangeEmail = (event) => {
-    setEmail(event.target.value);
-  };
-
-  const resetInputs = () => {
-    setName("");
-    setEmail("");
-    setDate(null);
-  };
-
-  const onSubmit = (event) => {
-    event.preventDefault();
-
-    const newUser = {
-      name: name,
-      email: email,
-      date: Date.now(),
-    };
-
-    axios
-      .post("http://localhost:4000/user/register", newUser)
-      .then((response) => {
-        alert("Created\t" + response.data.name);
-        console.log(response.data);
-      });
-
-    resetInputs();
+  const handleChange = (event) => {
+    set_user_type(event.target.value);
   };
 
   return (
-    <Grid container align={"center"} spacing={2}>
-      <Grid item xs={12}>
-        <TextField
-          label="Name"
-          variant="outlined"
-          value={name}
-          onChange={onChangeUsername}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <TextField
-          label="Email"
-          variant="outlined"
-          value={email}
-          onChange={onChangeEmail}
-        />
-      </Grid>
-      <Grid item xs={12}>
-        <Button variant="contained" onClick={onSubmit}>
-          Register
-        </Button>
-      </Grid>
+    <Grid>
+      <Box>
+        <Box sx={{ minWidth: 120 }}>
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">User Type</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={user_type}
+              label="User Type"
+              onChange={handleChange}
+            >
+              <MenuItem value={"vendor"}>Vendor</MenuItem>
+              <MenuItem value={"buyer"}>Buyer</MenuItem>
+            </Select>
+          </FormControl>
+        </Box>
+        {user_type === "vendor" ? (
+          <Vendor_Register />
+        ) : user_type === "buyer" ? (
+          <Buyer_Register />
+        ) : null}{" "}
+      </Box>
     </Grid>
   );
-};
-
-export default Register;
+}

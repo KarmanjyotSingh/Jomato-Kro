@@ -18,7 +18,7 @@ const vendor_schema = new Schema({
     required: true,
   },
   contact_number: {
-    type: Number,
+    type: String,
     required: true,
   },
   open_time: {
