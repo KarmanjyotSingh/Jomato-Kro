@@ -6,6 +6,7 @@ import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Table from "@mui/material/Table";
+import RateBox from "./rateBox"
 import TableBody from "@mui/material/TableBody";
 import Button from "@mui/material/Button";
 import EditMenu from "./edit_menu";
@@ -14,6 +15,7 @@ import nonveg from "../images/non-veg.png";
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/LocalDining';
 import CheckBox from "./checkbox"
+
 const UsersList = (props) => {
     const [users, setUsers] = useState([]);
     const [sortedUsers, setSortedUsers] = useState([]);
@@ -105,7 +107,7 @@ const UsersList = (props) => {
                                                 {user.placed_time}
                                             </TableCell>
                                             <TableCell>
-                                        
+
                                                 <Button
                                                     variant="contained"
                                                     color="primary"
@@ -132,7 +134,7 @@ const UsersList = (props) => {
 
                                             </TableCell>
                                             <TableCell>
-                                                {user.rating}
+                                                <RateBox id={user._id} numRated={user.num_rated} rating={user.rating} disabled={user.status === "COMPLETED" ? true : false} id={user._id} />
                                             </TableCell>
 
                                         </TableRow>

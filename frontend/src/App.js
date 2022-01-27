@@ -14,7 +14,7 @@ import Order from "./components/common/order2"
 import Orderuser from "./components/common/buyer_order_now";
 import MyOrder from "./components/common/buyer_show_order";  
 import Favorite from "./components/common/favorites";
-import Test from "./components/common/dialog";
+
 const Layout = () => {
   return (
     <div>
@@ -43,8 +43,7 @@ function App() {
           <Route path="userOrder" element={<Orderuser />} />
           <Route path="myOrder" element={<MyOrder />} />
           <Route path="favorite" element={<Favorite />} />
-          <Route path="test" element={<Test />} />
-
+      
         </Route>
       </Routes>
     </BrowserRouter>

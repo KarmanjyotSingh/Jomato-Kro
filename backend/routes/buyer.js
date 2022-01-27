@@ -118,4 +118,25 @@ router.put("/add_wallet_balance", (req, res) => {
     });
 });
 
+router.put("/sub_wallet_balance", (req, res) => {
+  const email = req.body.email;
+  const wallet = req.body.wallet;
+  buyer
+    .findOne({ email: email })
+    .then((buyer_found) => {
+      if (Number(wallet) < 0) {
+        res.status(400).send({ error: "Amount to be deducted can't be negative" });
+      } else {
+        buyer_found.wallet = Number(buyer_found.wallet) - Number(wallet);
+        buyer_found
+          .save()
+          .then((buyer_found) => res.json(buyer_found))
+          .catch((err) => res.send(err));
+      }
+    })
+    .catch((err) => {
+      res.status(404).send(err);
+    });
+});
+
 module.exports = router;

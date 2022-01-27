@@ -85,6 +85,7 @@ router.post("/addfav", (req, res) => {
         const newFav = new fav({
           name: req.body.name,
           email: req.body.email,
+          vendor_email: req.body.vendor_email,
           price: req.body.price,
           vendor_shop: req.body.vendor_shop
         });
@@ -96,6 +97,7 @@ router.post("/addfav", (req, res) => {
       }
     })
 });
+
 
 router.post("/remove_fav", (req, res) => {
   fav.findOne({ name: req.body.name, email: req.body.email })
@@ -115,16 +117,38 @@ router.post("/remove_fav", (req, res) => {
     })
 });
 
-router.get("/favorites", function (req, res) {
-
-  fav.find(function (err, users) {
-    if (err) {
-      console.log(err);
-    } else {
-      res.json(users);
-    }
-  })
+router.post("/favorites", (req, res) => {
+  fav.find({ email: req.body.email })
+    .then((favx) => {
+      if (favx) {
+        res.status(200).json(favx);
+      } else {
+        res.status(400).send("Not Found");
+      }
+    })
 });
+
+router.put("/rate", (req, res) => {
+  const id = req.body.id;
+  const n = req.body.n;
+  food
+    .findOne({ _id: id })
+    .then((food_found) => {
+      food_found.rating = req.body.newRating;
+      food_found.num_rated = n;
+
+      food_found
+        .save()
+        .then((food_found) => res.json(food_found))
+        .catch((err) => res.send(err));
+    })
+    .catch((err) => {
+      res.status(404).send(err);
+    });
+}); 
+
+
+
 
 
 module.exports = router;

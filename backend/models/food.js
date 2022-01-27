@@ -43,6 +43,11 @@ const food_schema = new Schema({
     type: Number,
     default: 0
   },
+  // store the number of ratings for each food item
+  num_rated: {
+    type: Number,
+    default: 0
+  }
 });
 
 module.exports = food = mongoose.model("food_item", food_schema);

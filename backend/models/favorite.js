@@ -6,6 +6,10 @@ const fav_schema = new Schema({
         type: String,
         required: true,
     },
+    vendor_email: {
+        type: String,
+        required: true,
+    },
     email: {
         type: String,
         required: true
