@@ -82,42 +82,57 @@ router.put("/edit_profile", (req, res) => {
     });
 });
 
-function parse_tag(params) {
-  let tags = [];
-  for (let i = 0; i < params.length; i++) {
-    let k = i;
-    for ( let j = k ; j < params.length; j++) {
-    }
-  }
-}
-
 router.post("/food_items", (req, res) => {
   const item_name = req.body.name;
-  const vendor_name = req.body.vendor;
-  food.findOne({ name: item_name, vendor: vendor_name }).then((food_found) => {
+  const vendor_name = req.body.vendor_email;
+  food.findOne({ name: item_name, vendor_email: vendor_name }).then((food_found) => {
     if (food_found) {
       res.status(400).send("Item already exists");
     } else {
       const newFood = new food({
         name: req.body.name,
         price: req.body.price,
-        vendor: req.body.vendor,
-        rating: req.body.rating,
+        vendor_shop: req.body.vendor,
+        vendor_email: req.body.vendor_email,
+        addon_name: req.body.addon_name,
         food_type: req.body.food_type,
-        food_add_on: req.body.food_add_on,
-        tags: req.body.tags,
+        addon_price: req.body.addon_price,
+        tags: req.body.tags
       });
       newFood
         .save()
-        .then((newFood) => res.json(newFood))
-        .catch((err) => res.send(err));
+        .then((newFood) => res.status(200).json(newFood))
+        .catch((err) => res.status(410).send(err));
+    }
+  });
+});
+
+router.put("/food_items", (req, res) => {
+  const id = req.body.id;
+  food.findOne({ _id: id }).then((food_found) => {
+    if (food_found) {
+      food_found.name = req.body.name;
+      food_found.price = req.body.price;
+      food_found.vendor = req.body.vendor;
+      food_found.rating = (req.body.rating) ? req.body.rating : 0;
+      food_found.food_type = req.body.food_type;
+      food_found.addon_name = req.body.addon_name;
+      food_found.tags = req.body.tags;
+      food_found.addon_price = req.body.addon_price;
+      // food_found.image = req.body.image;
+      food_found
+        .save()
+        .then((food_found) => res.status(200).json(food_found))
+        .catch((err) => res.status(400).send(err));
+    } else {
+      res.status(404).send("No food item found");
     }
   });
 });
 
 router.post("/item_list", (req, res) => {
-  const vendor_name = req.body.vendor;
-  food.find({ vendor: vendor_name }).then((food_found) => {
+  const vendor_name = req.body.email;
+  food.find({ vendor_email: vendor_name }).then((food_found) => {
     if (food_found) {
       res.json(food_found);
     } else {
@@ -126,6 +141,136 @@ router.post("/item_list", (req, res) => {
   });
 });
 
-router.delete("");
+router.post("/getitem", (req, res) => {
+  const item_name = req.body.name;
+  const vendor_name = req.body.vendor_email;
+  food.find({ name: item_name, vendor_email: vendor_name }).then((food_found) => {
+    if (food_found) {
+      res.status(200).json(food_found);
+    } else {
+      res.status(404).send("No items found");
+    }
+  });
+});
+
+router.post("/add_tag", (req, res) => {
+  const vendor_name = req.body.vendor;
+  const item_name = req.body.name;
+  food.findOne({ name: item_name, vendor: vendor_name }).then((food_found) => {
+    if (food_found) {
+      food_found.tags.push(req.body.tag);
+      food_found
+        .save()
+        .then((food_found) => res.json(food_found))
+        .catch((err) => res.send(err));
+    } else {
+      res.status(404).send("No item found");
+    }
+  });
+});
+
+router.post("/remove_tag", (req, res) => {
+  const vendor_name = req.body.vendor;
+  const item_name = req.body.name;
+  food.findOne({ name: item_name, vendor: vendor_name }).then((food_found) => {
+    if (food_found) {
+      food_found.tags.pop(req.body.tag);
+      food_found
+        .save()
+        .then((food_found) => res.json(food_found))
+        .catch((err) => res.send(err));
+    } else {
+      res.status(404).send("No item found");
+    }
+  });
+});
+
+router.post("/remove_item", (req, res) => {
+  const item_name = req.body.name;
+  const vendor_name = req.body.vendor_email;
+  food.deleteOne({ name: item_name, vendor_email: vendor_name })
+    .then((food_found) => {
+      res.status(200).json({ status: "Success", food_found: food_found });
+    }
+    )
+    .catch((err) => res.send(err));
+});
+
+router.put("/changecount", (req, res) => {
+  const email = req.body.email;
+  const item_name = req.body.item_name;
+  const value = req.body.value;
+  vendor.findOne({ email: email })
+    .then((vendor_found) => {
+      vendor_found[item_name] += Number(value);
+      vendor_found
+        .save()
+        .then((vendor_found) => res.json(vendor_found))
+        .catch((err) => res.send(err));
+    })
+    .catch((err) => res.send(err));
+});
+
+router.put("/addOrder", (req, res) => {
+
+  const email = req.body.email;
+  const item_name = req.body.item_name;
+  food.findOne({ name: item_name, vendor_email: email })
+    .then((food_found) => {
+      food_found.count += 1;
+      food_found
+        .save()
+        .then((food_found) => res.json(food_found))
+        .catch((err) => res.send(err));
+    })
+    .catch((err) => res.send(err));
+});
+
+router.put("/orderAageKro", (req, res) => {
+  const id = req.body.id;
+  const vendor_email = req.body.email;
+  const item_name = req.body.item;
+  response = {}
+  food.findOne({ name: item_name, vendor_email: vendor_email })
+    .then((food_found) => {
+      if (food_found) {
+        food_found.num_ordered += 1;
+        food_found
+          .save()
+          .then((food_found) => response.food_item = food_found)
+          .catch((err) => response.food = err);
+      } else {
+        response.food = "No food item found";
+      }
+    }
+    )
+    .catch((err) => response.food = err);
+
+  vendor.findOne({ email: req.body.email })
+    .then((vendor_found) => {
+      vendor_found.order_placed += req.body.placed;
+      vendor_found.pending_order += req.body.pending;
+      vendor_found.completed_order += req.body.complete;
+      vendor_found
+        .save()
+        .then((vendor_found) => response.vendor = vendor_found)
+        .catch((err) => response.vendor = err);
+    })
+    .catch((err) => response.vendor = err);
+
+  order.find({ _id: id })
+    .then((order_found) => {
+      if (order_found) {
+        order_found.status = req.body.status;
+        order_found
+          .save()
+          .then((order_found) => response.order = order_found)
+          .catch((err) => response.order = err);
+      } else {
+        response.order = "No order found";
+      }
+    })
+    .catch(err => response.order = err);
+});
 
 module.exports = router;

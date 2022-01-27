@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+
 const Schema = mongoose.Schema;
 
 const food_schema = new Schema({
@@ -10,29 +11,38 @@ const food_schema = new Schema({
     type: Number,
     required: true,
   },
-  vendor: {
+  vendor_shop: {
+    type: String,
+    required: true,
+  },
+  vendor_email: {
     type: String,
     required: true,
   },
   rating: {
     type: Number,
-    required: true,
+    default: 0,
   },
   food_type: {
     type: String,
     required: true,
   },
-  food_add_on: [
-    {
-      name: String,
-      price: Number,
-    },
-  ],
-  tags: [
-    {
-      name: String,
-    },
-  ],
+  addon_name: {
+    type: [String],
+    default: []
+  },
+  addon_price: {
+    type: [Number],
+    default: []
+  },
+  tags: {
+    type: [String],
+    default: []
+  },
+  num_ordered: {
+    type: Number,
+    default: 0
+  },
 });
 
-module.exports = food_item = mongoose.model("food_item", food_schema);
+module.exports = food = mongoose.model("food_item", food_schema);

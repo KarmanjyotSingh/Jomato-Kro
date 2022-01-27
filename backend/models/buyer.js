@@ -35,6 +35,10 @@ const buyer_schema = new Schema({
     // required: false,
     default: 0,
   },
+  user_type: {
+    type: String,
+    default: "buyer"
+  }
 });
 
 module.exports = buyer = mongoose.model("buyers", buyer_schema);

@@ -55,7 +55,7 @@ export default function SignUp(props) {
     setOpenTime("");
     setCloseTime("");
   };
-  
+
   const on_change_name = (event) => {
     console.log("Hello!");
     setName(event.target.value);
@@ -180,20 +180,22 @@ export default function SignUp(props) {
                 <TextField
                   required
                   fullWidth
+                  type="time"
                   id="open_time"
                   label="Opening Time"
                   name="open_time"
-                  autoComplete="open_time"
+                // autoComplete="open_time"
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
                   required
                   fullWidth
+                  type="time"
                   id="close_time"
                   label="Closing Time"
                   name="close_time"
-                  autoComplete="close_time"
+                //  autoComplete="close_time"
                 />
               </Grid>
               <Grid item xs={12}>

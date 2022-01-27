@@ -70,6 +70,7 @@ export default function Login(props) {
         localStorage.setItem("password", newUser.password);
         localStorage.setItem("status", 1);
         localStorage.setItem("user_type", response.data["user_type"]);
+        localStorage.setItem("shop_name", response.data["shop_name"]);
         console.log(response.data["user_type"]);
         window.location = "/";
         alert("login_success");
@@ -143,7 +144,7 @@ export default function Login(props) {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <Link href="https:localhost:3000/register" variant="body2">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>

@@ -26,7 +26,7 @@ router.post("/", (req, res) => {
             return res.status(400).json({ password: "Incorrect Password" });
           } else {
             // login successful
-            return res.status(200).json({ user_type: "buyer" });
+            return res.status(200).json(buyer_found);
           }
         });
       } else {
@@ -37,7 +37,7 @@ router.post("/", (req, res) => {
                 return res.status(400).json({ password: "Incorrect Password" });
               } else {
                 // login successful
-                return res.status(200).json({ user_type: "vendor" });
+                return res.status(200).json(vendor_found);
               }
             });
           } else {

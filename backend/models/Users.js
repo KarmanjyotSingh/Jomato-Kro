@@ -15,6 +15,10 @@ const UserSchema = new Schema({
     type: Date,
     required: false,
   },
+  user_type: {
+    type: String,
+    default: "buyer"
+  }
 });
 
 

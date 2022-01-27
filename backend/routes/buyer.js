@@ -89,10 +89,11 @@ router.post("/wallet_balance", (req, res) => {
   buyer
     .findOne({ email: email })
     .then((buyer_found) => {
-      res.json(buyer_found);
+      res.json(buyer_found.wallet);
     })
     .catch((err) => {
       res.status(404).send(err);
+      us;
     });
 });
 
@@ -102,19 +103,19 @@ router.put("/add_wallet_balance", (req, res) => {
   buyer
     .findOne({ email: email })
     .then((buyer_found) => {
-      buyer_found.wallet = buyer_found.wallet + wallet;
-      buyer_found
-        .save()
-        .then((buyer_found) =>
-          res.json(buyer_found)
-        )
-        .catch((err) => res.send(err));
+      if (Number(wallet) < 0) {
+        res.status(400).send({ error: "Wallet balance cannot be negative" });
+      } else {
+        buyer_found.wallet = Number(buyer_found.wallet) + Number(wallet);
+        buyer_found
+          .save()
+          .then((buyer_found) => res.json(buyer_found))
+          .catch((err) => res.send(err));
+      }
     })
     .catch((err) => {
       res.status(404).send(err);
     });
 });
-
-
 
 module.exports = router;

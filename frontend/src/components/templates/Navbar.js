@@ -5,6 +5,8 @@ import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
+import axios from "axios";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -16,6 +18,21 @@ const Navbar = () => {
     alert("Logout Success!");
     window.location = "/";
   };
+
+  const [wallet, setWallet] = React.useState(0);
+  React.useEffect(() => {
+    if (localStorage.getItem("user_type") === "buyer") {
+      axios
+        .post("http://localhost:4000/buyer/wallet_balance", { email: localStorage.getItem("email") })
+        .then((res) => {
+          console.log(res.data);
+          setWallet(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  });
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -31,27 +48,24 @@ const Navbar = () => {
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
           {localStorage.getItem("status") === "1" &&
-          localStorage.getItem("user_type") === "vendor" ? (
+            localStorage.getItem("user_type") === "vendor" ? (
             <Button color="inherit" onClick={() => navigate("/profile")}>
               My Profile
             </Button>
           ) : null}
           {localStorage.getItem("status") === "1" &&
-          localStorage.getItem("user_type") === "buyer" ? (
+            localStorage.getItem("user_type") === "buyer" ? (
             <Button color="inherit" onClick={() => navigate("/profile")}>
               My Profile
             </Button>
           ) : null}
           {localStorage.getItem("status") === "1" &&
-          localStorage.getItem("user_type") === "vendor" ? (
-            <Button color="inherit">Add Item</Button>
-          ) : null}
-          {localStorage.getItem("status") === "1" &&
-          localStorage.getItem("user_type") === "vendor" ? (
+            localStorage.getItem("user_type") === "vendor" ? (
             <Button color="inherit" onClick={() => navigate("/orders")}>
               Orders
             </Button>
           ) : null}
+
           {localStorage.getItem("status") === "" ? (
             <Button color="inherit" onClick={() => navigate("/register")}>
               Register
@@ -63,20 +77,45 @@ const Navbar = () => {
             </Button>
           ) : null}{" "}
           {localStorage.getItem("user_type") === "vendor" &&
-          localStorage.getItem("status") === "1" ? (
-            <Button color="inherit"> Food Menu</Button>
+            localStorage.getItem("status") === "1" ? (
+            <Button color="inherit" onClick={() => navigate("/foodList")}>
+              {" "}
+              Food Menu
+            </Button>
           ) : null}
           {localStorage.getItem("user_type") === "vendor" &&
-          localStorage.getItem("status") === "1" ? (
-            <Button color="inherit"> Orders Issued</Button>
+            localStorage.getItem("status") === "1" ? (
+            <Button color="inherit" onClick={() => navigate("/additem")}>
+              {" "}
+              Add Item
+            </Button>
           ) : null}
+
           {localStorage.getItem("user_type") === "vendor" &&
-          localStorage.getItem("status") === "1" ? (
+            localStorage.getItem("status") === "1" ? (
             <Button color="inherit"> Statistics</Button>
           ) : null}
           {localStorage.getItem("user_type") === "buyer" &&
-          localStorage.getItem("status") === "1" ? (
-            <Button color="inherit">Hello 2</Button>
+            localStorage.getItem("status") === "1"
+            ? (
+              <Button color="inherit" onClick={() => navigate("/userOrder")}>ORDER NOW</Button>
+            ) : null}
+          {localStorage.getItem("user_type") === "buyer" &&
+            localStorage.getItem("status") === "1" ? (
+            <Button color="inherit" onClick={() => navigate("/myOrder")}>VIEW ORDERS</Button>
+          ) : null}
+          {localStorage.getItem("user_type") === "buyer" &&
+            localStorage.getItem("status") === "1" ? (
+            <Button color="inherit"
+              onClick={() => navigate("/favorite")}>
+              FAVORITES</Button>
+          ) : null}
+          {localStorage.getItem("status") === "1" &&
+            localStorage.getItem("user_type") === "buyer" ? (
+            <Button color="inherit" onClick={() => navigate("/wallet")}>
+              <AccountBalanceWalletIcon> Wallet</AccountBalanceWalletIcon>
+              <Box sx={{ ml: 1 }}>{wallet}</Box>
+            </Button>
           ) : null}
           {localStorage.getItem("status") === "1" ? (
             <Button color="inherit" onClick={() => refresh_storage()}>

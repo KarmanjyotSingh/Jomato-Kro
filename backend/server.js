@@ -12,7 +12,8 @@ var UserRouter = require("./routes/Users");
 var BuyerRouter = require("./routes/buyer");
 var loginRouter = require("./routes/login");
 var VendorRouter = require("./routes/vendor");
-
+var FoodRouter = require("./routes/food");
+var OrderRouter = require("./routes/order");
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -32,6 +33,8 @@ app.use("/user", UserRouter);
 app.use("/buyer", BuyerRouter);
 app.use("/login", loginRouter);
 app.use("/vendor", VendorRouter);
+app.use("/food", FoodRouter);
+app.use("/order", OrderRouter);
 
 app.listen(PORT, function () {
   console.log("Server is running on Port: " + PORT);

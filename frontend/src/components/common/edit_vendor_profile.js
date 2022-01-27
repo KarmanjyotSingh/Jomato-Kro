@@ -112,9 +112,7 @@ export default function SignUp(props) {
       .put("http://localhost:4000/vendor/edit_profile", newVendor)
       .then((res) => {
         console.log(res.data);
-        window.href = "/";
         localStorage.setItem("edit", "0");
-        alert("Profile Updated");
       })
       .catch((err) => {
         console.log(err.response.data);

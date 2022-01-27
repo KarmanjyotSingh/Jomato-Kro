@@ -1,54 +1,130 @@
-import * as React from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import React, { useState } from "react";
+// import "./App.css";
+var tableRowIndex = 0;
+function TableRow({ row, handleDataChange, deleteRow }) {
+  const index = row.index;
+  const [first_name, handleChangeFirstName] = useState(row.first_name);
+  const [last_name, handleChangeLastName] = useState(row.last_name);
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
+  const updateValues = (e) => {
+    var inputName = e.target.name;
+    var inputValue = e.target.value;
+    if (inputName == "first_name") {
+      handleChangeFirstName(inputValue);
+    } else if (inputName == "last_name") {
+      handleChangeLastName(inputValue);
+    }
 
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
+    handleDataChange({
+      index: index,
+      first_name: first_name,
+      last_name: last_name,
+    });
+  };
 
-export default function BasicTable() {
+  const removeRow = () => {
+    deleteRow(index);
+  };
+
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Dessert (100g serving)</TableCell>
-            <TableCell align="right">Calories</TableCell>
-            <TableCell align="right">Fat&nbsp;(g)</TableCell>
-            <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-            <TableCell align="right">Protein&nbsp;(g)</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow
-              key={row.name}
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right">{row.carbs}</TableCell>
-              <TableCell align="right">{row.protein}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <tr>
+      <td>{index + 1}</td>
+      <td>
+        <input
+          type="text"
+          name="first_name"
+          className="first_name"
+          placeholder="First Name"
+          value={first_name}
+          onChange={updateValues}
+        ></input>
+        <input
+          type="text"
+          name="last_name"
+          className="last_name"
+          placeholder="Last Name"
+          value={last_name}
+          onChange={updateValues}
+        ></input>
+      </td>
+      <td>
+        <button type="button" className="btn btn-remove" onClick={removeRow}>
+          &times;
+        </button>
+      </td>
+    </tr>
   );
 }
+
+function Table() {
+  const [talbeRows, setRows] = useState([
+    {
+      index: 0,
+      first_name: "",
+      last_name: "",
+    },
+  ]);
+
+  // Receive data from TableRow
+  const handleChange = (data) => {
+    talbeRows[data.index] = data;
+  };
+
+  // Add New Table Row
+  const addNewRow = () => {
+    tableRowIndex = parseFloat(tableRowIndex) + 1;
+    var updatedRows = [...talbeRows];
+    updatedRows[tableRowIndex] = {
+      index: tableRowIndex,
+      first_name: "",
+      last_name: "",
+    };
+    setRows(updatedRows);
+  };
+
+  // Remove Table row if rows are count is more than 1
+  const deleteRow = (index) => {
+    if (talbeRows.length > 1) {
+      var updatedRows = [...talbeRows];
+      var indexToRemove = updatedRows.findIndex((x) => x.index == index);
+      if (indexToRemove > -1) {
+        updatedRows.splice(indexToRemove, 1);
+        setRows(updatedRows);
+      }
+    }
+  };
+
+  return (
+    <div className="customers">
+      <table className="table" id="customers">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {talbeRows.map((row, index) => {
+            if (row)
+              return (
+                <TableRow
+                  key={index}
+                  row={row}
+                  handleDataChange={handleChange}
+                  deleteRow={deleteRow}
+                ></TableRow>
+              );
+          })}
+        </tbody>
+      </table>
+      <div>
+        <button className="btn-add" onClick={addNewRow}>
+          +Add
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export default Table;
