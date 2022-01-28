@@ -11,6 +11,10 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
+import { ListItemText } from "@mui/material";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 
 const theme = createTheme();
 
@@ -84,7 +88,7 @@ export default function SignUp(props) {
     };
 
     console.log(newBuyer);
-    
+
     axios
       .put("http://localhost:4000/buyer/edit_profile", newBuyer)
       .then((res) => {
@@ -178,16 +182,22 @@ export default function SignUp(props) {
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="batch"
-                  onChange={on_change_batch}
-                  value={batch}
-                  label="batch"
-                  name="batch_name"
-                  autoComplete="batch"
-                />
+                <ListItemText primary="Batch" />
+                <FormControl required fullWidth>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    name="batch_name"
+                    value={batch}
+                    onChange={on_change_batch}
+                  >
+                    <MenuItem value={"UG1"}>UG1</MenuItem>
+                    <MenuItem value={"UG2"}>UG2</MenuItem>
+                    <MenuItem value={"UG3"}>UG3</MenuItem>
+                    <MenuItem value={"UG4"}>UG4</MenuItem>
+                    <MenuItem value={"UG5"}>UG5</MenuItem>
+                  </Select>
+                </FormControl>
               </Grid>
               <Grid item xs={12}>
                 <TextField

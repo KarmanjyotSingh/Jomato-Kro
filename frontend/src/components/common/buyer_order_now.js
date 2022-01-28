@@ -13,12 +13,9 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import TextField from '@mui/material/TextField';
-import RateBox from "./rateBox"
 import Veg from "../images/veg.png";
 import Nonveg from "../images/non-veg.png";
 import DialogContentText from '@mui/material/DialogContentText';
-import { ListItemText } from "@mui/material";
-import RupeeIcon from '@mui/icons-material/CurrencyRupee';
 import DialogTitle from '@mui/material/DialogTitle';
 import Box from '@mui/material/Box';
 import Favorite from '@mui/icons-material/Favorite';
@@ -27,10 +24,17 @@ import Checkbox from '@mui/material/Checkbox';
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
+import Fuse from "fuse.js";
+import FormControlLabel from '@mui/material/FormControlLabel';
+import { Typography } from "@mui/material";
+import { useTheme } from '@mui/material/styles';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import Chip from "@mui/material/Chip";
 
 function ControlledCheckbox(props) {
     const [checked, setChecked] = React.useState(false);
@@ -92,6 +96,7 @@ function ControlledCheckbox(props) {
 
 function ControlledCheckbox2(props) {
     const [checked, setChecked] = React.useState(false);
+
     const handleChange = (event) => {
         setChecked(event.target.checked);
         if (checked) {
@@ -143,7 +148,6 @@ function FormDialog(props) {
     const [open, setOpen] = React.useState(false);
     const [quantity, setQuantity] = React.useState(1);
     const [bill, setBill] = React.useState(props.price);
-    console.log(bill)
     const [AddOns, setAddOns] = React.useState([]);
 
     const [name, setName] = React.useState(props.name)
@@ -191,6 +195,21 @@ function FormDialog(props) {
                             axios
                                 .post("http://localhost:4000/order/place_order", query)
                                 .then((res) => {
+                                    axios
+                                        .put("http://localhost:4000/food/increase_count", { name: query.item_name, email: query.vendor_email })
+                                        .then((res) => {
+                                            axios.put("http://localhost:4000/vendor/updatePlace", { vendor_email: query.vendor_email })
+                                                .then((res) => {
+                                                    console.log(res)
+                                                })
+                                                .catch((err) => {
+                                                    console.log(err)
+                                                })
+                                            console.log(res)
+                                        })
+                                        .catch((err) => {
+                                            console.log(err)
+                                        })
                                     console.log(res);
                                     if (res.status == 200) {
                                         alert("Order Placed");
@@ -236,7 +255,7 @@ function FormDialog(props) {
     return (
         <div>
             <Button variant="outlined" onClick={handleClickOpen}>
-                Order Now
+                {props.text}
             </Button>
             <Dialog id={props.id} open=
                 {(!props.disabled && open)} onClose={handleClose}>
@@ -352,6 +371,136 @@ function FormDialog(props) {
     );
 }
 
+
+function IndeterminateCheckbox(props) {
+
+    const children = (
+        <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
+            <FormControlLabel
+                label="Veg"
+                control={<Checkbox checked={props.checked[0]} onChange={props.handleChange2} />}
+            />
+            <FormControlLabel
+                label="Non-Veg"
+                control={<Checkbox checked={props.checked[1]} onChange={props.handleChange3} />}
+            />
+        </Box>
+    );
+    return (
+        <div>
+            <Typography
+                id="discrete-slider"
+                gutterBottom
+                variant="h5"
+            >   Food Type Checkbox</Typography>
+            <FormControlLabel
+                label="All"
+                control={
+                    <Checkbox
+                        checked={props.checked[0] && props.checked[1]}
+                        indeterminate={props.checked[0] !== props.checked[1]}
+                        onChange={props.handleChange1}
+                    />
+                }
+            />
+            {children}
+        </div>
+    );
+}
+
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
+
+function getStyles(name, personName, theme) {
+    return {
+        fontWeight:
+            personName.indexOf(name) === -1
+                ? theme.typography.fontWeightRegular
+                : theme.typography.fontWeightMedium,
+    };
+}
+
+function CheckboxList(props) {
+    const theme = useTheme();
+    const handleChange = (event) => {
+        const {
+            target: { value },
+        } = event;
+        props.setPersonName(
+            // On autofill we get a stringified value.
+            typeof value === 'string' ? value.split(',') : value,
+        );
+    };
+    return (
+        <div>
+            <FormControl sx={{ m: 1, width: 300 }}>
+                <InputLabel id="demo-multiple-name-label">Name</InputLabel>
+                <Select
+                    labelId="demo-multiple-name-label"
+                    id="demo-multiple-name"
+                    multiple
+                    value={props.personName}
+                    onChange={handleChange}
+                    input={<OutlinedInput label="Name" />}
+                    MenuProps={MenuProps}
+                >
+                    {props.names.map((name) => (
+                        <MenuItem
+                            key={name}
+                            value={name}
+                            style={getStyles(name, props.personName, theme)}
+                        >
+                            {name}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl>
+        </div>
+    );
+}
+
+function AddTags(props) {
+    const [text, setText] = useState('')
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        let temp = [...props.tags]
+        temp.push(text)
+        props.setTags(temp)
+    };
+    return (
+        <Grid container spacing={6}>
+            <Grid item xs={12} sm={8}>
+                <TextField
+                    id={props.id.toString()}
+                    label="tags"
+                    fullWidth
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                />
+            </Grid>
+            <Grid item xs={8} sm={4}>
+                <Button
+                    onClick={handleSubmit}
+                    fullWidth
+                    variant="contained"
+                    color="inherit"
+                >
+                    Submit Tag
+                </Button>
+            </Grid>
+        </Grid>
+    );
+}
+
 const UsersList = (props) => {
     const [users, setUsers] = useState([]);
     const [sortedUsers, setSortedUsers] = useState([]);
@@ -364,12 +513,30 @@ const UsersList = (props) => {
     const [OPENARR, setOPENARR] = useState([]);
     const [sortRate, setSortRate] = useState(true);
     const [search, setSearch] = useState("")
+    const [checked, setChecked] = React.useState([true, true]);
+    const [Formshops, setShops] = useState([]);
+    const [searchTags, setTags] = useState([]);
+    const [searchShop, setSearchShop] = useState([]);
+    const [minPrice, setMin] = useState(0);
+    const [maxPrice, setMax] = useState(10000);
+
+    const handleChange1 = (event) => {
+        setChecked([event.target.checked, event.target.checked]);
+    };
+    const handleChange2 = (event) => {
+        setChecked([event.target.checked, checked[1]]);
+    };
+    const handleChange3 = (event) => {
+        setChecked([checked[0], event.target.checked]);
+    };
+
     localStorage.setItem("edit_menu", "0");
 
     useEffect(() => {
         axios
             .get("http://localhost:4000/food/orderItems")
             .then((response) => {
+                console.log(response.data);
                 axios
                     .get("http://localhost:4000/shops")
                     .then(res => {
@@ -377,7 +544,14 @@ const UsersList = (props) => {
                         let closedShops = []
                         let open = []
                         let closed = []
+                        let shops = []
+                        let tags = []
                         for (var i = 0; i < response.data.length; i++) {
+                            let temp = [tags, ...response.data[i].tags]
+                            tags = [...temp]
+                            if (!shops.includes(response.data[i].vendor_shop)) {
+                                shops.push(response.data[i].vendor_shop)
+                            }
                             if (res.data.open.includes(response.data[i].vendor_email, 0)) {
                                 open.push(response.data[i])
                                 if (!openShops.includes(response.data[i].vendor_email, 0)) {
@@ -391,16 +565,17 @@ const UsersList = (props) => {
                                 }
                             }
                         }
+                        //     console.log(response.data)
+
                         setclose(closedShops)
                         setCLOSEDARR(closed)
                         setOPENARR(open)
                         setopen(openShops)
-                        console.log(closedShops)
-                        console.log(openShops)
                         let final = [...open, ...closed]
                         setUsers(final);
                         setSortedUsers(response.data);
                         setSearchText("");
+                        setShops(shops);
                     })
                     .catch(err => {
                         console.log(err)
@@ -414,6 +589,7 @@ const UsersList = (props) => {
             });
         ;
     }, []);
+
     function handleEdit(props) {
 
         localStorage.setItem("item_name_editing", props.name);
@@ -476,42 +652,151 @@ const UsersList = (props) => {
         setSortRate(!sortRate);
     };
 
-    const customFunction = (event) => {
-        console.log(event.target.value);
-        setSearch(event.target.value);
+    const FuzzySearch = (findKro) => {
+        setSearch(findKro);
+        if (!findKro) {
+            let temp = [...OPENARR, ...CLOSEDARR]
+            setUsers(temp);
+            return;
+        }
+
+        let temp = [...OPENARR, ...CLOSEDARR]
+        const fuse = new Fuse(temp, {
+            keys: ["name"]
+        });
+        const result = fuse.search(findKro);
+        const finalLength = result.length;
+        let final = [];
+        if (finalLength === 0) {
+            setUsers([]);
+            return;
+        }
+        else {
+            result.forEach(element => {
+                final.push(element.item);
+            });
+            setUsers(final)
+        }
     };
-    console.log(sclosed)
-    console.log(sopen)
+    //console.log(searchTags)
     return (
         edit_menu === "0" ? (
-            <Grid>
-                <Grid container>
-                    <Grid item xs={12} md={9} lg={9}>
-                        <List component="nav" aria-label="mailbox folders">
-                            <TextField
-                                id="standard-basic"
-                                label="Search"
-                                value={search}
-                                fullWidth
-                                onChange={customFunction}
+            <Grid  >
+                <Typography
+                    id="discrete-slider"
+                    gutterBottom
+                    variant="h4"
+                > Search Bar</Typography>
+                <br></br>
+                <Grid item xs={18} md={9} lg={9}>
+                    <List component="nav" aria-label="mailbox folders">
+
+                        <TextField
+                            id="standard-basic"
+                            label="Do Fuzzy Duzzy Search :)"
+                            value={search}
+                            fullWidth
+                            onChange={(event) => FuzzySearch(event.target.value)}
+                        />
+                    </List>
+                    <br></br>
+
+                    <IndeterminateCheckbox checked={checked} handleChange1={handleChange1} handleChange2={handleChange2} handleChange3={handleChange3} />
+
+                </Grid>
+                <br></br>
+                <Grid>
+                    <Typography
+                        id="discrete-slider"
+                        gutterBottom
+                        variant="h5"
+                    >
+                        Shop Name
+                    </Typography>
+                    <Grid>
+                        <CheckboxList setPersonName={setSearchShop} personName={searchShop} names={Formshops} />
+                    </Grid>
+                    <br></br>
+
+                </Grid>
+                <Grid>
+                    <Typography
+                        id="discrete-slider"
+                        gutterBottom
+                        variant="h5"
+                    >
+                        Tags
+                    </Typography>
+                    <Grid>
+                        <AddTags tags={searchTags} setTags={setTags} id={searchTags.length} />
+                        <br></br>
+                        Current Search Tags : {"    "}
+                        {searchTags.map((tag, index) => (
+                            <Chip
+                                variant="outlined"
+                                label="success"
+                                key={index}
+                                label={tag}
+                                onDelete={() => {
+                                    let temp = [...searchTags]
+                                    temp.splice(index, 1)
+                                    setTags(temp)
+                                }}
                             />
-                        </List>
+                        ))}
+                    </Grid>
+                    <br></br>
+                </Grid>
+                <Grid container >
+                    <Typography
+                        id="discrete-slider"
+                        gutterBottom
+                        variant="h5"
+                    >
+                        Price
+                    </Typography>
+                    <br></br>
+                    <Grid container spacing={3}>
+                        <Grid item xs={12} sm={4}>
+                            <TextField
+                                id="##"
+                                label="Minimum Price"
+                                fullWidth
+                                value={minPrice}
+                                type="number"
+                                onChange={(event) => setMin(event.target.value)}
+                                size="small"
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={4}>
+                            <TextField
+                                id="##"
+                                label="Maximum Price"
+                                fullWidth
+                                size="small"
+                                value={maxPrice}
+                                onChange={(event) => setMax(event.target.value)}
+                                type="number"
+                            />
+                        </Grid>
                     </Grid>
                 </Grid>
+                <br></br>
                 <Grid container>
                     <Grid item xs={12} md={9} lg={9}>
                         <Paper>
-                            <Table size="small">
+                            <Table size="large">
                                 <TableHead>
-                                    <TableRow>
+                                    <TableRow >
                                         <TableCell>Item Name</TableCell>
                                         <TableCell>Food Type</TableCell>
                                         <TableCell>
                                             <div>
                                                 <Button onClick={sortPrice}>
+                                                    Price
                                                     {sortName ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
                                                 </Button>
-                                                Price
+
                                             </div>
                                         </TableCell>
                                         <TableCell>
@@ -528,9 +813,9 @@ const UsersList = (props) => {
                                         </TableCell>
                                         <TableCell>
                                             <Button onClick={sortRateF}>
+                                                Rating
                                                 {sortRate ? <ArrowDownwardIcon /> : <ArrowUpwardIcon />}
                                             </Button>
-                                            Rating
                                         </TableCell>
                                         <TableCell>
                                             Order
@@ -539,52 +824,57 @@ const UsersList = (props) => {
                                 </TableHead>
                                 <TableBody>
                                     {users.map((user, ind) => (
-                                        <TableRow key={ind}
-                                            bgcolor={sclosed.includes(user.vendor_email) ? "lightgrey" : "white"}
-                                        >
-
-                                            <TableCell>{user.name}
-                                            </TableCell>
-                                            <TableCell>
-                                                {user.food_type == "veg" ? <img src={Veg} alt="veg" height="20px" width="20px" /> : <img src={Nonveg} alt="nonveg" height="20px" width="20px" />
-                                                }</TableCell>
-                                            <TableCell>{user.price}</TableCell>
-                                            <TableCell>{user.vendor_shop}</TableCell>
-                                            <TableCell>
-                                                {
-                                                    user.addon_name.map((addon, ind) => (
-                                                        <div key={ind}>
-                                                            <ul>
-                                                                <li>
-                                                                    {addon}{"  "}
-                                                                    {user.addon_price[ind]}
-                                                                </li>
-                                                            </ul>
-                                                        </div>
-                                                    ))
-                                                }
-                                            </TableCell>
-                                            <TableCell>{user.tags.map((name, ind) => (
-                                                <div key={ind}>
-                                                    <ul>
-                                                        <li>
-                                                            {name}
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            ))
-                                            }
-                                            </TableCell>
-                                            <TableCell>
-                                                <ControlledCheckbox key={user._id} name={user.name} shop={user.vendor_shop} email={user.vendor_email} price={user.price} />
-                                            </TableCell>
-                                            <TableCell>
-                                                {user.rating}
-                                            </TableCell>
-                                            <TableCell>
-                                                <FormDialog disabled={sclosed.includes(user.vendor_email)} id={user._id} name={user.name} price={user.price} shop={user.vendor_shop} vendor_email={user.vendor_email} addon_name={user.addon_name} buyer_email={localStorage.getItem("email")} addon_price={user.addon_price} />
-                                            </TableCell>
-                                        </TableRow>
+                                        ((user.food_type === "veg" && checked[0] || user.food_type === "non-veg" && checked[1] || !checked[0] && !checked[1])) ? (
+                                            (searchShop.includes(user.vendor_shop) || searchShop.length === 0) ? (
+                                                (searchTags.length === 0 || searchTags.every(tag => user.tags.includes(tag))) ? (
+                                                    (user.price >= minPrice && user.price <= maxPrice) ? (
+                                                        <TableRow key={ind}
+                                                            bgcolor={sclosed.includes(user.vendor_email) ? "lightgrey" : "white"}
+                                                        >
+                                                            <TableCell>{user.name}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                {user.food_type == "veg" ? <img src={Veg} alt="veg" height="20px" width="20px" /> : <img src={Nonveg} alt="nonveg" height="20px" width="20px" />
+                                                                }</TableCell>
+                                                            <TableCell>{user.price}</TableCell>
+                                                            <TableCell>{user.vendor_shop}</TableCell>
+                                                            <TableCell>
+                                                                {
+                                                                    user.addon_name.map((addon, ind) => (
+                                                                        <div key={ind}>
+                                                                            <ul>
+                                                                                <li>
+                                                                                    {addon}{"  "}
+                                                                                    {user.addon_price[ind]}
+                                                                                </li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    ))
+                                                                }
+                                                            </TableCell>
+                                                            <TableCell>{user.tags.map((name, ind) => (
+                                                                <div key={ind}>
+                                                                    <ul>
+                                                                        <li>
+                                                                            {name}
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
+                                                            ))
+                                                            }
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <ControlledCheckbox key={user._id} name={user.name} shop={user.vendor_shop} email={user.vendor_email} price={user.price} />
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                {user.rating}
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <FormDialog text={sclosed.includes(user.vendor_email) ? "CLOSED FOR ORDERING" : "ORDER NOW"} disabled={sclosed.includes(user.vendor_email)} id={user._id} name={user.name} price={user.price} shop={user.vendor_shop} vendor_email={user.vendor_email} addon_name={user.addon_name} buyer_email={localStorage.getItem("email")} addon_price={user.addon_price} />
+                                                            </TableCell>
+                                                        </TableRow>) : null)
+                                                    : null) : null
+                                        ) : null
                                     ))}
                                 </TableBody>
                             </Table>

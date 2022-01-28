@@ -129,14 +129,23 @@ router.post("/favorites", (req, res) => {
 });
 
 router.put("/rate", (req, res) => {
-  const id = req.body.id;
-  const n = req.body.n;
+  let x = req.body.newRating;
+  let name = req.body.name;
+  let email = req.body.email;
   food
-    .findOne({ _id: id })
+    .findOne({ name: name, vendor_email: email })
     .then((food_found) => {
-      food_found.rating = req.body.newRating;
-      food_found.num_rated = n;
-
+      console.log(food_found.num_rated);
+      console.log(food_found.rating);
+      console.log(x);
+      let r = parseInt(food_found.rating) * parseInt(food_found.num_rated)
+      console.log(r);
+      r += parseInt(x)
+      console.log(r);
+      r /= (parseInt(food_found.num_rated) + 1);
+      console.log(r);
+      food_found.rating = r;
+      food_found.num_rated = food_found.num_rated + 1;
       food_found
         .save()
         .then((food_found) => res.json(food_found))
@@ -145,8 +154,43 @@ router.put("/rate", (req, res) => {
     .catch((err) => {
       res.status(404).send(err);
     });
-}); 
+});
 
+router.put("/increase_count", (req, res) => {
+  let name = req.body.name;
+  let email = req.body.email;
+
+  food
+    .findOne({ name: name, vendor_email: email })
+    .then((food_found) => {
+      food_found.num_ordered += 1;
+      food_found
+        .save()
+        .then((food_found) => res.json(food_found))
+        .catch((err) => res.send(err));
+    })
+    .catch((err) => {
+      res.status(404).send(err);
+    });
+});
+
+router.put("/incSold", (req, res) => {
+  let name = req.body.name;
+  let email = req.body.email;
+
+  food
+    .findOne({ name: name, vendor_email: email })
+    .then((food_found) => {
+      food_found.num_sold += 1;
+      food_found
+        .save()
+        .then((food_found) => res.json(food_found))
+        .catch((err) => res.send(err));
+    })
+    .catch((err) => {
+      res.status(404).send(err);
+    });
+});
 
 
 

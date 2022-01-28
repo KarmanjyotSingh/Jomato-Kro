@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 const order = require("../models/order");
 const vendor = require("../models/vendor");
+const food = require("../models/food");
 // get the order data 
 // no need to edit 
 /// do we delete the order data from the database ? 
@@ -67,25 +68,24 @@ router.put("/changestate", (req, res) => {
 });
 
 router.post("/getstatecount", (req, res) => {
-    var response = {
-        cooking: 0,
-        accept: 0
-    }
-    order.find({ vendor_email: req.body.vendor_email, status: "COOKING" })
+    let cooking = 0
+    let accept = 0
+    let i = 0
+    order.find({ vendor_email: req.body.vendor_email })
+
         .then((order_found) => {
-            if (order_found) {
-                response.cooking = order_found.length
-            }
-        });
-    order.find({ vendor_email: req.body.vendor_email, status: "ACCEPTED" })
-        .then((order_found) => {
-            if (order_found) {
-                response.accept = order_found.length
-            }
+            order_found.forEach(order => {
+                if (order.status === "COOKING")
+                    cooking++;
+                else if (order.status === "ACCEPTED")
+                    accept++
+            })
+            res.json({ cooking: cooking, accept: accept });
+
         })
-
-    res.json(response);
-
+        .catch((err) => {
+            res.status(404).send(err);
+        });
 });
 
 router.put("/handlestatechange", (req, res) => {
@@ -122,5 +122,29 @@ router.put("/handlestatechange", (req, res) => {
     res.json({ accept: accept, cooking: cooking, order_data: order_data });
 });
 
+router.put("/rate", (req, res) => {
+    const id = req.body._id;
+    const rate = req.body.rate
+    order.findOne({ _id: id })
+        .then((order_found) => {
+            order_found.rated = rate;
+            console.log("MY ORDER" + order_found);
+            order_found
+                .save()
+                .then((order_found) => res.json(order_found))
+                .catch((err) => res.send(err));
+        })
+        .catch((err) => {
+            res.status(404).send(err);
+        });
+})
 
+
+router.post("/orderstat", (req, res) => {
+    food.find({ vendor_email: req.body.vendor_email }).sort({ num_sold: -1 }).limit(5)
+        .then(food => res.json(food))
+        .catch(err => console.log(err));
+})
+
+router.post("")
 module.exports = router;

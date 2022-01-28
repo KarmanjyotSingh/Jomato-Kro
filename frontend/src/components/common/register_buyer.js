@@ -17,7 +17,6 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { ListItemText } from "@mui/material";
-import { useState } from "react";
 import axios from "axios";
 
 function Copyright(props) {
@@ -104,7 +103,9 @@ export default function SignUp(props) {
       .then((res) => {
         console.log(res.data);
         //     resetInputs();
-        alert("Registered Successfully");
+        if (res.status == 200)
+          alert("Registered Successfully");
+        else alert("Registration Failed")
       })
       .catch((err) => {
         alert("Error");

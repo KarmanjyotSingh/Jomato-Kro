@@ -18,79 +18,70 @@ const UsersList = (props) => {
     const [acceptOrder, setAccept] = useState(0);
     const [cookOrder, setCook] = useState(0);
 
-    const handleChange = (event) => {
-        event.preventDefault();
+    useEffect(() => {
+        console.log(localStorage.getItem("email"));
+        axios
+            .post("http://localhost:4000/order/getstatecount", { vendor_email: localStorage.getItem("email") })
+            .then((res) => {
+                console.log(res.data);
+                setAccept(res.data.accept);
+                setCook(res.data.cooking);
+            })
+    }, [acceptOrder, cookOrder]);
 
-        if (event.target.value === "REJECTED") {
-            return event.target.disabled = true;
-        }
-        let placed = 0, pending = 0, complete = 0, status = ""
+    const handleChange = (event) => {
+
+        event.preventDefault();
         const email = localStorage.getItem("email");
-        if (event.target.value === "PLACED") {
-            // increase the placed order count
-            placed = 1;
-            if (acceptOrder + cookOrder < 10) {
-                // accept order , increase the pending order count
-                event.target.value = "ACCEPTED";
-                pending = 1;
+        let pending = 0, complete = 0
+        if (event.target.value === "REJECTED") {
+            event.target.disabled = true;
+        } else {
+            if (event.target.value === "PLACED") {
+                // increase the placed order count
+                if (acceptOrder + cookOrder < 10) {
+                    // accept order , increase the pending order count
+                    event.target.value = "ACCEPTED";
+                    pending = 1;
+                }
+                else {
+                    alert("Can have at max 10 orders in accepted or cook stage !!")
+                }
+            } 
+            else if (event.target.value === "ACCEPTED") {
+                event.target.value = "COOKING";
+            } 
+            else if (event.target.value === "COOKING") {
+                event.target.value = "READY FOR PICKUP";
+                // remove the pending order thing from pending_order
+                pending = -1;
+                // add the completed order count
             }
-        } else if (event.target.value === "ACCEPTED") {
-            event.target.value = "COOKING";
-        } else if (event.target.value === "COOKING") {
-            event.target.value = "READY FOR PICKUP";
-            // remove the pending order thing from pending_order
-            pending = -1;
-            // add the completed order count
-            complete = 1;
         }
 
         console.log(event.target.id);
         console.log(event.target.value);
 
-        const query = {
-            "id": event.target.id,
-            "placed": placed,
-            "pending": pending,
-            "complete": complete,
-            "status": event.target.value,
-            "email": email
-        };
-
-        axios
-            .put("http://localhost:4000/order/handlestatechange", query)
-            .then(res => {
-                console.log(res.data);
-            })
-            .catch(err => console.log(err));
-
-
+        // changes the state of the 
         axios
             .put("http://localhost:4000/order/changestate", { _id: event.target.id, state: event.target.value })
             .then((res) => {
+                axios
+                    .put("http://localhost:4000/vendor/updateCount", { vendor_email: email, pending: pending })
+                    .then((res) => {
+                        console.log(res)
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+
                 console.log(res);
             })
             .catch((err) => {
                 console.log(err);
             });
 
-        axios
-            .post("http://localhost:4000/order/getstatecount", { vendor_email: localStorage.getItem("email"), status: "ACCEPTED" })
-            .then((res) => {
-                console.log("Accept Count : " + res.data);
-                setAccept(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
-        axios
-            .post("http://localhost:4000/order/getstatecount", { vendor_email: localStorage.getItem("email"), status: "COOKING" })
-            .then((res) => {
-                console.log("Cooking Count   " + res.data);
-                setCook(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+
         window.location.reload();
 
     };
@@ -161,7 +152,7 @@ const UsersList = (props) => {
                             <TableBody>
                                 {orders.map((order, ind) => (
                                     <TableRow
-                                        bgcolor={(order.status === "REJECTED" ? "lightgrey" : "").toString()}
+                                        bgcolor={(order.status === "REJECTED" ? "lightgrey" : order.status === "COMPLETED" ? "lightgreen" : "").toString()}
                                         key={ind} >
                                         <TableCell>{ind}</TableCell>
                                         <TableCell>{order.item_name}</TableCell>
@@ -183,10 +174,10 @@ const UsersList = (props) => {
                                                 color="primary"
                                                 id={order._id}
                                                 value={order.status}
-                                                disabled={order.status === "REJECTED" || order.status === "READY FOR PICKUP" || (acceptOrder + cookOrder >= 10 && order.status === "PLACED") ? true : false}
+                                                disabled={order.status === "COMPLETED" || order.status === "REJECTED" || order.status === "READY FOR PICKUP" || (acceptOrder + cookOrder >= 10 && order.status === "PLACED") ? true : false}
                                                 onClick={handleChange}
                                             >
-                                                {order.status === "READY FOR PICKUP" ? "WAITING FOR BUYER" : <Tab />}
+                                                Change State
                                             </Button>
                                         </TableCell>
                                         <TableCell>

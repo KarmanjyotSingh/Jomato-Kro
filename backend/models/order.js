@@ -36,6 +36,10 @@ const OrderSchema = new Schema({
     addon_name: {
         type: [String],
         default: []
+    },
+    rated: {
+        type: Number,
+        default: 0
     }
     ,
     addon_price: {
@@ -48,6 +52,5 @@ const OrderSchema = new Schema({
         required: true
     }
 });
-
 
 module.exports = Order = mongoose.model("Order", OrderSchema);

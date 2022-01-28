@@ -93,7 +93,7 @@ const Navbar = () => {
 
           {localStorage.getItem("user_type") === "vendor" &&
             localStorage.getItem("status") === "1" ? (
-            <Button color="inherit"> Statistics</Button>
+            <Button color="inherit" onClick={() => navigate("/stats")}> Statistics</Button>
           ) : null}
           {localStorage.getItem("user_type") === "buyer" &&
             localStorage.getItem("status") === "1"

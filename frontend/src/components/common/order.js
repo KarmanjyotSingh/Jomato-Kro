@@ -170,7 +170,8 @@ const UsersList = (props) => {
                                                 color="primary"
                                                 id={order._id}
                                                 value={order.status}
-                                                disabled={order.status === "REJECTED" || order.status === "READY FOR PICKUP" || (acceptOrder + cookOrder >= 10 && order.status === "PLACED") ? true : false}
+                                                disabled={order.status === "COMPLETED" ? true : false}
+                                                //disabled={order.status === "REJECTED" || order.status === "READY FOR PICKUP" || order.status === "COMPLETED" || (acceptOrder + cookOrder >= 10 && order.status === "PLACED") ? true : false}
                                                 onClick={handleChange}
                                             >
                                                 {order.status === "READY FOR PICKUP" ? "WAITING FOR BUYER" : <Tab />}

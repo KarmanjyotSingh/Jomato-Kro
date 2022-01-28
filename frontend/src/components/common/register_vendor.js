@@ -101,14 +101,18 @@ export default function SignUp(props) {
     axios
       .post("http://localhost:4000/vendor/register", newVendor)
       .then((res) => {
+        if (res.status === 200)
+          alert("Registered Succesful")
+        else alert("Failed")
         console.log(res);
       })
       .catch((err) => {
+        alert("Failed")
         console.log(err.response.data);
       });
     // eslint-disable-next-line no-console
     resetInput();
-    window.location.reload();
+    //window.location.reload();
   };
 
   return (
@@ -221,7 +225,7 @@ export default function SignUp(props) {
             </Button>
           </Box>
         </Box>
-        
+
       </Container>
     </ThemeProvider>
   );

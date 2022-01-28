@@ -39,10 +39,17 @@ const food_schema = new Schema({
     type: [String],
     default: []
   },
+
   num_ordered: {
     type: Number,
     default: 0
   },
+
+  num_sold: {
+    type: Number,
+    default: 0
+  },
+
   // store the number of ratings for each food item
   num_rated: {
     type: Number,

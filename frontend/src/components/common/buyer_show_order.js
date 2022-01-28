@@ -9,12 +9,25 @@ import Table from "@mui/material/Table";
 import RateBox from "./rateBox"
 import TableBody from "@mui/material/TableBody";
 import Button from "@mui/material/Button";
-import EditMenu from "./edit_menu";
-import veg from "../images/veg.png";
-import nonveg from "../images/non-veg.png";
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/LocalDining';
-import CheckBox from "./checkbox"
+import Box from '@mui/material/Box';
+import Rating from '@mui/material/Rating';
+import * as React from 'react';
+
+function BasicRating(props) {
+    const [value, setValue] = useState(props.value);
+    return (
+        <Box
+            sx={{
+                '& > legend': { mt: 2 },
+            }}
+        >
+            <Rating name="read-only" value={props.value} readOnly />
+
+        </Box>
+    );
+}
+
+
 
 const UsersList = (props) => {
     const [users, setUsers] = useState([]);
@@ -22,6 +35,8 @@ const UsersList = (props) => {
     const [sortName, setSortName] = useState(true);
     const [searchText, setSearchText] = useState("");
     const [edit_menu, setEditMenu] = useState("0");
+    const [rate, setRate] = useState(0);
+    const [isRates, isR] = useState(0);
     localStorage.setItem("edit_menu", "0");
 
     useEffect(() => {
@@ -56,96 +71,119 @@ const UsersList = (props) => {
     };
 
     return (
-        edit_menu === "0" ? (
-            <div>
-                <Grid container>
-                    <Grid item xs={12} md={9} lg={9}>
-                        <Paper>
-                            <Table size="small">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell> Sr No.</TableCell>
-                                        <TableCell>Item Name</TableCell>
-                                        <TableCell>
-                                            Price
-                                        </TableCell>
-                                        <TableCell>
-                                            Vendor Shop
-                                        </TableCell>
-                                        <TableCell>
-                                            Add-Ons
-                                        </TableCell>
-                                        <TableCell>
-                                            Time-Placed
-                                        </TableCell>
-                                        <TableCell>
-                                            Status
-                                        </TableCell>
+        <div>
+            <Grid container>
+                <Grid item xs={12} md={9} lg={9}>
+                    <Paper>
+                        <Table size="small">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell> Sr No.</TableCell>
+                                    <TableCell>Item Name</TableCell>
+                                    <TableCell>
+                                        Price
+                                    </TableCell>
+                                    <TableCell>
+                                        Vendor Shop
+                                    </TableCell>
+                                    <TableCell>
+                                        Add-Ons
+                                    </TableCell>
+                                    <TableCell>
+                                        Time-Placed
+                                    </TableCell>
+                                    <TableCell>
+                                        Quantity
+                                    </TableCell>
+                                    <TableCell>
+                                        Status
+                                    </TableCell>
 
+                                    <TableCell>
+                                        Rating
+                                    </TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {users.map((user, ind) => (
+                                    <TableRow
+                                        bgcolor={(user.status === "REJECTED" ? "lightgrey" : (user.status === "COMPLETED" ? "lightgreen" : "")).toString()}
+                                        key={ind}>
+                                        <TableCell>{ind}</TableCell>
+                                        <TableCell>{user.item_name}</TableCell>
+                                        <TableCell>{user.bill}</TableCell>
+                                        <TableCell>{user.vendor_shop}</TableCell>
                                         <TableCell>
-                                            Rating
+                                            {
+                                                user.addon_name.map((addon, ind) => (
+                                                    <div key={ind}>
+                                                        {addon}{"  "}
+                                                    </div>
+                                                ))
+                                            }
                                         </TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {users.map((user, ind) => (
-                                        <TableRow key={ind}>
-                                            <TableCell>{ind}</TableCell>
-                                            <TableCell>{user.item_name}</TableCell>
-                                            <TableCell>{user.bill}</TableCell>
-                                            <TableCell>{user.vendor_shop}</TableCell>
-                                            <TableCell>
-                                                {
-                                                    user.addon_name.map((addon, ind) => (
-                                                        <div key={ind}>
-                                                            {addon}{"  "}
-                                                        </div>
-                                                    ))
-                                                }
-                                            </TableCell>
-                                            <TableCell>
-                                                {user.placed_time}
-                                            </TableCell>
-                                            <TableCell>
+                                        <TableCell>
+                                            {user.placed_time}
+                                        </TableCell>
+                                        <TableCell>{user.quantity}</TableCell>
+                                        <TableCell>
 
-                                                <Button
-                                                    variant="contained"
-                                                    color="primary"
-                                                    disabled={(user.status === "READY FOR PICKUP") ? false : true}
-                                                    onClick={() => {
-                                                        if (user.status === "READY FOR PICKUP") {
-                                                            {
+                                            <Button
+                                                variant="contained"
+                                                color="primary"
+                                                disabled={(user.status === "READY FOR PICKUP" && !Boolean(user.rated)) ? false : true}
+                                                onClick={() => {
+                                                    if (user.status === "READY FOR PICKUP") {
+
+                                                        axios
+                                                            .put("http://localhost:4000/order/changestate", { _id: user._id, state: "COMPLETED" })
+                                                            .then((res) => {
+                                                                console.log(res);
                                                                 axios
-                                                                    .put("http://localhost:4000/order/changestate", { _id: user._id, state: "COMPLETED" })
+                                                                    .put("http://localhost:4000/vendor/updateComplete", { vendor_email: user.vendor_email })
                                                                     .then((res) => {
+                                                                        axios
+                                                                            .put("http://localhost:4000/food/incSold", { name: user.item_name, email: user.vendor_email })
+                                                                            .then((res) => { })
+                                                                            .catch((err) => {
+                                                                                console.log(err);
+                                                                            });
                                                                         console.log(res);
                                                                     })
-                                                                    .catch((err) => {
-                                                                        console.log(err);
+                                                                    .catch((error) => {
+                                                                        console.log(error);
                                                                     });
 
-                                                            }
-                                                        }
-                                                    }}
-                                                >
-                                                    {user.status}
-                                                </Button>
+                                                                alert("Order Completed");
+                                                            })
+                                                            .catch((err) => {
+                                                                console.log(err);
+                                                            });
 
 
-                                            </TableCell>
-                                            <TableCell>
-                                                <RateBox id={user._id} numRated={user.num_rated} rating={user.rating} disabled={user.status === "COMPLETED" ? true : false} id={user._id} />
-                                            </TableCell>
+                                                    }
+                                                }}
+                                            >
+                                                {user.status}
+                                            </Button>
 
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </Paper>
-                    </Grid>
+                                        </TableCell>
+                                        <TableCell>
+                                            {
+                                                user.rated !== 0 ? <div>{user.rated}</div> :
+                                                    <RateBox isRate={isRates} set={isR} rating={user.rated} rate={rate} setRate={setRate} email={user.vendor_email} name={user.item_name} id={user._id} numRated={user.num_rated} rating={user.rating} disabled={user.status === "COMPLETED" ? false : true} id={user._id} />
+                                            }
+                                        </TableCell>
+
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </Paper>
                 </Grid>
-            </div >
-        ) : (<EditMenu />));
+            </Grid>
+        </div >
+    );
 };
 
 export default UsersList;

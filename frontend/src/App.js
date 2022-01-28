@@ -12,9 +12,9 @@ import FoodMenu from "./components/common/food_menu";
 import AddItem from "./components/common/additem";
 import Order from "./components/common/order2"
 import Orderuser from "./components/common/buyer_order_now";
-import MyOrder from "./components/common/buyer_show_order";  
+import MyOrder from "./components/common/buyer_show_order";
 import Favorite from "./components/common/favorites";
-
+import Stats from "./components/common/stats";
 const Layout = () => {
   return (
     <div>
@@ -43,7 +43,8 @@ function App() {
           <Route path="userOrder" element={<Orderuser />} />
           <Route path="myOrder" element={<MyOrder />} />
           <Route path="favorite" element={<Favorite />} />
-      
+          <Route path="stats" element={<Stats />} />
+
         </Route>
       </Routes>
     </BrowserRouter>

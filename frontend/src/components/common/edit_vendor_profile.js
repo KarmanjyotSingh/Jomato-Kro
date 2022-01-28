@@ -204,6 +204,7 @@ export default function SignUp(props) {
                   required
                   fullWidth
                   id="open_time"
+                  type="time"
                   onChange={on_change_open_time}
                   value={open_time}
                   label="Opening Time"
@@ -216,6 +217,7 @@ export default function SignUp(props) {
                   required
                   fullWidth
                   id="close_time"
+                  type="time"
                   onChange={on_change_close_time}
                   value={close_time}
                   label="Closing Time"
