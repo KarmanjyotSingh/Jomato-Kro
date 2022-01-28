@@ -10,7 +10,7 @@ import Profile from "./components/common/profile";
 import Wallet from "./components/common/wallet";
 import FoodMenu from "./components/common/food_menu";
 import AddItem from "./components/common/additem";
-import Order from "./components/common/order2"
+import Order from "./components/common/order3"
 import Orderuser from "./components/common/buyer_order_now";
 import MyOrder from "./components/common/buyer_show_order";
 import Favorite from "./components/common/favorites";

@@ -34,7 +34,7 @@ const UsersList = (props) => {
             .then((response) => {
                 setPlaced(response.data.total);
                 setComplete(response.data.completed);
-                setPending(response.data.total - response.data.completed);
+                setPending(response.data.total - response.data.completed - response.data.cancelled);
 
                 axios.post("http://localhost:4000/order/orderstat", { vendor_email: localStorage.getItem("email") })
                     .then((response) => {

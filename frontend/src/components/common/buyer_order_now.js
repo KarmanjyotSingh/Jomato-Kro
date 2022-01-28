@@ -149,7 +149,6 @@ function FormDialog(props) {
     const [quantity, setQuantity] = React.useState(1);
     const [bill, setBill] = React.useState(props.price);
     const [AddOns, setAddOns] = React.useState([]);
-
     const [name, setName] = React.useState(props.name)
     const [price, setPrice] = React.useState(props.price)
     const [shop, setShop] = React.useState(props.shop)

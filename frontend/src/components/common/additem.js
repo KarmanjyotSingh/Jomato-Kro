@@ -19,7 +19,7 @@ import Avatar from '@mui/icons-material/LocalDining';
 let xD = 0
 const theme = createTheme();
 
-function AddOns(props) {
+function AddOnsList(props) {
     const handleAddOnSubmit = (event) => {
         event.preventDefault();
         const addOn = {
@@ -27,10 +27,10 @@ function AddOns(props) {
             price: document.getElementById(`addOnPrice${props.index}`).value
         };
         if (addOn.name === '' || addOn.price === '') {
-            alert("Please enter a valid name and price");
+            alert("Empty Strings Not allowed");
         } else {
             if (props.addOnNames.length < props.index) {
-                alert("Make sure previous add-ons are added before adding new ones");
+                alert("Error");
             } else if (props.addOnNames.length === props.index) {
                 props.setAddOnNames([...props.addOnNames, addOn.name]);
                 props.setAddOnPrices([...props.addOnPrices, addOn.price]);
@@ -79,7 +79,7 @@ function AddOns(props) {
     );
 }
 
-function AddTags(props) {
+function TagList(props) {
     const handleSubmit = (event) => {
         event.preventDefault();
         const Tags = {
@@ -87,10 +87,10 @@ function AddTags(props) {
         }
 
         if (Tags.name === '') {
-            alert("Please enter a valid name and price");
+            alert("Empty Value not allowed");
         } else {
             if (props.foodTags.length < props.index) {
-                alert("Make sure previous Tags are added before adding new ones");
+                alert("Add Tags !!");
             } else if (props.foodTags.length === props.index) {
                 props.setTag([...props.foodTags, Tags.name]);
             } else {
@@ -177,12 +177,12 @@ export default function FoodItems() {
 
     var addOnFields = [];
     for (var x = 0; x < count; x++) {
-        addOnFields.push(<AddOns key={x} index={x} addOnNames={foodItem} addOnPrices={foodItemPrice} setAddOnNames={setFoodItem} setAddOnPrices={setFoodItemPrice} />);
+        addOnFields.push(<AddOnsList key={x} index={x} addOnNames={foodItem} addOnPrices={foodItemPrice} setAddOnNames={setFoodItem} setAddOnPrices={setFoodItemPrice} />);
     }
 
     var tagFields = [];
     for (var i = 0; i < countTags; i++) {
-        tagFields.push(<AddTags key={i} index={i} foodTags={foodTags} setTag={setTag} />);
+        tagFields.push(<TagList key={i} index={i} foodTags={foodTags} setTag={setTag} />);
     }
     console.log(foodTags);
     return (

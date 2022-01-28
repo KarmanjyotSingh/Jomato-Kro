@@ -1,1 +1,0 @@
-POST     ("http://localhost:4000/order/orderstat", { vendor_email: "karman@g.com" })

@@ -8,9 +8,8 @@ import TableRow from "@mui/material/TableRow";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import Button from "@mui/material/Button";
-import Tab from '@mui/icons-material/KeyboardTab';
 import Cancel from '@mui/icons-material/Cancel';
-
+import emailjs from 'emailjs-com';
 const UsersList = (props) => {
 
     const [orders, setOrders] = useState([]);
@@ -30,7 +29,6 @@ const UsersList = (props) => {
     }, [acceptOrder, cookOrder]);
 
     const handleChange = (event) => {
-
         event.preventDefault();
         const email = localStorage.getItem("email");
         let pending = 0, complete = 0
@@ -47,10 +45,10 @@ const UsersList = (props) => {
                 else {
                     alert("Can have at max 10 orders in accepted or cook stage !!")
                 }
-            } 
+            }
             else if (event.target.value === "ACCEPTED") {
                 event.target.value = "COOKING";
-            } 
+            }
             else if (event.target.value === "COOKING") {
                 event.target.value = "READY FOR PICKUP";
                 // remove the pending order thing from pending_order
@@ -66,6 +64,9 @@ const UsersList = (props) => {
         axios
             .put("http://localhost:4000/order/changestate", { _id: event.target.id, state: event.target.value })
             .then((res) => {
+                console.log(event.target.myText.vendor_email)
+                console.log(event.target.myText.buyer_email)
+
                 axios
                     .put("http://localhost:4000/vendor/updateCount", { vendor_email: email, pending: pending })
                     .then((res) => {
@@ -156,7 +157,7 @@ const UsersList = (props) => {
                                         key={ind} >
                                         <TableCell>{ind}</TableCell>
                                         <TableCell>{order.item_name}</TableCell>
-                                        <TableCell>{order.buyer_email}</TableCell>
+                                        <TableCell id={order._id + "buyer_email"}>{order.buyer_email}</TableCell>
                                         <TableCell>{order.quantity}</TableCell>
                                         <TableCell>{order.placed_time}</TableCell>
                                         <TableCell>{order.status}</TableCell>
@@ -184,6 +185,7 @@ const UsersList = (props) => {
                                             <Button
                                                 fullWidth
                                                 id={order._id}
+                                                value={order.shop}
                                                 variant="contained"
                                                 color="primary"
                                                 disabled={order.status === "PLACED" ? false : true}

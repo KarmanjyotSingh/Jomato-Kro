@@ -334,14 +334,17 @@ router.post("/getSTATS", (req, res) => {
 
   let completed = 0
   let total = 0
+  let cancelled = 0
   order.find({ vendor_email: req.body.email })
     .then((order_found) => {
       order_found.forEach(element => {
         if (element.status === "COMPLETED")
           completed += 1
+        if (element.status === "REJECTED")
+          cancelled += 1;
         total++
       });
-      res.json({ completed: completed, total: total })
+      res.json({ completed: completed, total: total, cancelled: cancelled })
     })
     .catch((err) => {
       res.status(404).send(err);
