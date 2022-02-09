@@ -2,7 +2,8 @@ import ls from "local-storage";
 
 return (
   <h3>
-    Jomato Mein Aapka Swagat H !!
+    Jomato mein apka swagat h !!
+
   </h3>
 );
 
