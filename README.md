@@ -2,7 +2,7 @@
 
 ### A Food Ordering Website built using MERN stack .
 <br><br>
- <img src = "./images/jomato.png" alt="jomato">
+ <img src = "./images/landing.png" alt="jomato">
  
  ### Key Features : 
  
@@ -18,3 +18,6 @@
  6. Implemented **Rate** food order , once the order is completed , the buyer could rate the food item , and the rating gets updated on the site.
  7. Implemented feature to add multiple tags and food add-ons , for the vendor while adding a food item for display.
  8.Implemented **Shop Timing**  feature , wherein the shops that is closed at the time of food ordering appear at the bottom of the list and grayed-out , to mark them as unavailable for ordering.
+
+<img src = "./images/jomato.png" alt="jomato">
+ 
