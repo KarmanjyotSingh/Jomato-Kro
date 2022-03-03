@@ -31,14 +31,14 @@ export default function RatingFormDialog(props) {
         props.set(y);
         console.log(y);
         axios
-            .put("http://localhost:4000/food/rate", { email: props.email, name: props.name, newRating: y })
+            .put("api/food/rate", { email: props.email, name: props.name, newRating: y })
             .then(res => {
                 props.setRate(Number(res.data.rating))
                 console.log(res);
                 handleClose();
 
                 axios
-                    .put("http://localhost:4000/order/rate", { _id: props.id, rate: y })
+                    .put("api/order/rate", { _id: props.id, rate: y })
                     .then(res => {
                         console.log(res);
                         alert("Rating submitted!")

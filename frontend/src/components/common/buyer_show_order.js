@@ -41,7 +41,7 @@ const UsersList = (props) => {
 
     useEffect(() => {
         axios
-            .post("http://localhost:4000/order/myorder", { buyer_email: localStorage.getItem("email") })
+            .post("api/order/myorder", { buyer_email: localStorage.getItem("email") })
             .then((response) => {
                 setUsers(response.data);
                 setSortedUsers(response.data);
@@ -136,14 +136,14 @@ const UsersList = (props) => {
                                                     if (user.status === "READY FOR PICKUP") {
 
                                                         axios
-                                                            .put("http://localhost:4000/order/changestate", { _id: user._id, state: "COMPLETED" })
+                                                            .put("api/order/changestate", { _id: user._id, state: "COMPLETED" })
                                                             .then((res) => {
                                                                 console.log(res);
                                                                 axios
-                                                                    .put("http://localhost:4000/vendor/updateComplete", { vendor_email: user.vendor_email })
+                                                                    .put("api/vendor/updateComplete", { vendor_email: user.vendor_email })
                                                                     .then((res) => {
                                                                         axios
-                                                                            .put("http://localhost:4000/food/incSold", { name: user.item_name, email: user.vendor_email })
+                                                                            .put("api/food/incSold", { name: user.item_name, email: user.vendor_email })
                                                                             .then((res) => { })
                                                                             .catch((err) => {
                                                                                 console.log(err);

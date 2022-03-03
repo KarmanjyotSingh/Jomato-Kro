@@ -29,7 +29,7 @@ const UsersList = (props) => {
 
     useEffect(() => {
         axios
-            .post("http://localhost:4000/vendor/item_list", { email: localStorage.getItem("email") })
+            .post("api/vendor/item_list", { email: localStorage.getItem("email") })
             .then((response) => {
                 setUsers(response.data);
                 setSortedUsers(response.data);
@@ -42,7 +42,7 @@ const UsersList = (props) => {
 
     const handleDelete = (e) => {
         axios
-            .post("http://localhost:4000/vendor/remove_item", { name: e.target.value, email: localStorage.getItem("email") })
+            .post("api/vendor/remove_item", { name: e.target.value, email: localStorage.getItem("email") })
             .then((response) => {
                 setUsers(response.data);
                 setSortedUsers(response.data);

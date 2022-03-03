@@ -43,7 +43,7 @@ function ControlledCheckbox(props) {
         setChecked(event.target.checked);
         if (checked) {
             axios
-                .post("http://localhost:4000/food/remove_fav", { name: props.name, email: localStorage.getItem("email") })
+                .post("api/food/remove_fav", { name: props.name, email: localStorage.getItem("email") })
                 .then((res) => {
                     console.log(res);
                     if (res.status == 200)
@@ -55,7 +55,7 @@ function ControlledCheckbox(props) {
         }
         else {
             axios
-                .post("http://localhost:4000/food/addfav", { name: props.name, email: localStorage.getItem("email"), vendor_email: props.email, price: props.price, vendor_shop: props.shop })
+                .post("api/food/addfav", { name: props.name, email: localStorage.getItem("email"), vendor_email: props.email, price: props.price, vendor_shop: props.shop })
                 .then((res) => {
                     console.log(res);
                     if (res.status == 200)
@@ -69,7 +69,7 @@ function ControlledCheckbox(props) {
 
     React.useEffect(() => {
         axios
-            .post("http://localhost:4000/food/favorites", { email: localStorage.getItem("email") })
+            .post("api/food/favorites", { email: localStorage.getItem("email") })
             .then((response) => {
                 for (var i = 0; i < response.data.length; i++) {
                     if (response.data[i].name == props.name) {
@@ -184,20 +184,20 @@ function FormDialog(props) {
         }
         console.log(query)
         axios
-            .post("http://localhost:4000/buyer/wallet_balance", { email: localStorage.getItem("email") })
+            .post("api/buyer/wallet_balance", { email: localStorage.getItem("email") })
             .then((wal) => {
                 let balance = wal.data
                 if (balance >= query.bill) {
                     axios
-                        .put("http://localhost:4000/buyer/sub_wallet_balance", { email: localStorage.getItem("email"), wallet: query.bill })
+                        .put("api/buyer/sub_wallet_balance", { email: localStorage.getItem("email"), wallet: query.bill })
                         .then((res) => {
                             axios
-                                .post("http://localhost:4000/order/place_order", query)
+                                .post("api/order/place_order", query)
                                 .then((res) => {
                                     axios
-                                        .put("http://localhost:4000/food/increase_count", { name: query.item_name, email: query.vendor_email })
+                                        .put("api/food/increase_count", { name: query.item_name, email: query.vendor_email })
                                         .then((res) => {
-                                            axios.put("http://localhost:4000/vendor/updatePlace", { vendor_email: query.vendor_email })
+                                            axios.put("api/vendor/updatePlace", { vendor_email: query.vendor_email })
                                                 .then((res) => {
                                                     console.log(res)
                                                 })
@@ -216,7 +216,7 @@ function FormDialog(props) {
                                 })
                                 .catch((err) => {
                                     axios
-                                        .put("http://localhost:4000/buyer/add_wallet_balance", { email: localStorage.getItem("email"), wallet: query.bill })
+                                        .put("api/buyer/add_wallet_balance", { email: localStorage.getItem("email"), wallet: query.bill })
                                         .then((res) => {
                                             console.log(res);
                                             alert("Order Failed !! Amount Refunded!")
@@ -533,11 +533,11 @@ const UsersList = (props) => {
 
     useEffect(() => {
         axios
-            .get("http://localhost:4000/food/orderItems")
+            .get("api/food/orderItems")
             .then((response) => {
                 console.log(response.data);
                 axios
-                    .get("http://localhost:4000/shops")
+                    .get("api/shops")
                     .then(res => {
                         let openShops = []
                         let closedShops = []
@@ -570,6 +570,10 @@ const UsersList = (props) => {
                         setCLOSEDARR(closed)
                         setOPENARR(open)
                         setopen(openShops)
+                        console.log(res.data)
+                        console.log((new Date).getMinutes())
+                        console.log("close",closedShops)
+                        console.log("open",openShops)
                         let final = [...open, ...closed]
                         setUsers(final);
                         setSortedUsers(response.data);

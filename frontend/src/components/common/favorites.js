@@ -19,7 +19,7 @@ const UsersList = (props) => {
 
     useEffect(() => {
         axios
-            .post("http://localhost:4000/food/favorites", { email: localStorage.getItem("email") })
+            .post("api/food/favorites", { email: localStorage.getItem("email") })
 
             .then((response) => {
                 setUsers(response.data);

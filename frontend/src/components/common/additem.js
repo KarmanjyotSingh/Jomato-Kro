@@ -22,45 +22,48 @@ const theme = createTheme();
 function AddOnsList(props) {
     const handleAddOnSubmit = (event) => {
         event.preventDefault();
-        const addOn = {
-            name: document.getElementById(`addOnName${props.index}`).value,
-            price: document.getElementById(`addOnPrice${props.index}`).value
-        };
-        if (addOn.name === '' || addOn.price === '') {
+        //const addOn = {
+        const name = document.getElementById(`names${props.index}`).value
+        const price = document.getElementById(`prices${props.index}`).value
+        // };
+        if (name === '' || price === '') {
             alert("Empty Strings Not allowed");
         } else {
-            if (props.addOnNames.length < props.index) {
-                alert("Error");
-            } else if (props.addOnNames.length === props.index) {
-                props.setAddOnNames([...props.addOnNames, addOn.name]);
-                props.setAddOnPrices([...props.addOnPrices, addOn.price]);
-            } else {
-                let newNames = [...props.addOnNames];
-                let newPrices = [...props.addOnPrices];
-                newNames[props.index] = addOn.name;
-                newPrices[props.index] = addOn.price;
+            if (props.names.length > props.index) {
+                let newNames = [...props.names];
+                let newPrices = [...props.prices];
+                newNames[props.index] = name;
+                newPrices[props.index] = price;
                 props.setAddOnNames(newNames);
                 props.setAddOnPrices(newPrices);
+            } else {
+                if (props.names.length === props.index) {
+                    props.setAddOnNames([...props.names, name]);
+                    props.setAddOnPrices([...props.prices, price]);
+                } else {
+                    alert("Error");
+
+                }
             }
             xD++;
             console.log(xD)
-            console.log(props.addOnNames)
+            console.log(props.names)
         }
     };
     return (
         <Grid container spacing={3}>
             <Grid item xs={12} sm={4}>
                 <TextField
-                    id={`addOnName${props.index}`}
-                    label="Add On Name"
+                    id={`names${props.index}`}
+                    label="addon names"
                     fullWidth
                     size="small"
                 />
             </Grid>
             <Grid item xs={12} sm={4}>
                 <TextField
-                    id={`addOnPrice${props.index}`}
-                    label="Add On Price"
+                    id={`prices${props.index}`}
+                    label="addon price"
                     fullWidth
                     size="small"
                     type="number"
@@ -139,7 +142,7 @@ export default function FoodItems() {
 
     // make axios request to the backend to request for the food data firstly
     React.useEffect(() => {
-        axios.post("http://localhost:4000/vendor/item_list", { email: vendor_email })
+        axios.post("api/vendor/item_list", { email: vendor_email })
 
             .then((response) => {
                 setFoodItem(response.data);
@@ -166,18 +169,21 @@ export default function FoodItems() {
         console.log(foodItem)
         console.log(foodItemPrice)
         axios
-            .post("http://localhost:4000/vendor/food_items", newFoodItem)
+            .post("api/vendor/food_items", newFoodItem)
             .then((response) => {
                 console.log(response);
+                alert("Food Item Added Successfully");
+                window.location.reload();
             })
             .catch((err) => {
                 console.log(err);
+                alert("Error Occured");
             });
     };
 
     var addOnFields = [];
     for (var x = 0; x < count; x++) {
-        addOnFields.push(<AddOnsList key={x} index={x} addOnNames={foodItem} addOnPrices={foodItemPrice} setAddOnNames={setFoodItem} setAddOnPrices={setFoodItemPrice} />);
+        addOnFields.push(<AddOnsList key={x} index={x} names={foodItem} prices={foodItemPrice} setAddOnNames={setFoodItem} setAddOnPrices={setFoodItemPrice} />);
     }
 
     var tagFields = [];

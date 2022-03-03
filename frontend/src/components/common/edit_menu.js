@@ -23,28 +23,26 @@ const theme = createTheme();
 function AddOns(props) {
     const handleAddOnSubmit = (event) => {
         event.preventDefault();
-        const addOn = {
-            name: document.getElementById(`addOnName${props.index}`).value,
-            price: document.getElementById(`addOnPrice${props.index}`).value
-        };
-        console.log(addOn);
-        if (addOn.name === '' || addOn.price === '') {
-            alert("Please enter a valid name and price");
+        const name = document.getElementById(`addOnName${props.index}`).value
+        const price = document.getElementById(`addOnPrice${props.index}`).value
+
+        if (name === '' || price === '') {
+            alert("Empty Fields Not Allowed");
         } else {
             if (props.addOnNames.length < props.index) {
-                alert("Make sure previous add-ons are added before adding new ones");
-            } else if (props.addOnNames.length === props.index) {
-                props.setAddOnNames([...props.addOnNames, addOn.name]);
-                props.setAddOnPrices([...props.addOnPrices, addOn.price]);
-                // props.setKey(props.key + 1);
+                alert("Error ");
             } else {
-                let newNames = [...props.addOnNames];
-                let newPrices = [...props.addOnPrices];
-                newNames[props.index] = addOn.name;
-                newPrices[props.index] = addOn.price;
-                props.setAddOnNames(newNames);
-                props.setAddOnPrices(newPrices);
-                // props.setAddOns(newArr);
+                if (props.addOnNames.length === props.index) {
+                    props.setAddOnNames([...props.addOnNames, name]);
+                    props.setAddOnPrices([...props.addOnPrices, price]);
+                } else {
+                    let newNames = [...props.addOnNames];
+                    let newPrices = [...props.addOnPrices];
+                    newNames[props.index] = name;
+                    newPrices[props.index] = price;
+                    props.setAddOnNames(newNames);
+                    props.setAddOnPrices(newPrices);
+                }
             }
         }
     };
@@ -53,11 +51,9 @@ function AddOns(props) {
             <Grid item xs={12} sm={4}>
                 <TextField
                     id={`addOnName${props.index}`}
-                    //label="Add On Name"
                     fullWidth
                     size="small"
                     value={props.addOnNames[props.index]}
-                // onChange={handleAddOnNameChange}
                 />
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -151,7 +147,7 @@ export default function FoodItems(props) {
     // make axios request to the backend to request for the food data firstly
     React.useEffect(() => {
         if (user_email) {
-            axios.post("http://localhost:4000/vendor/getitem", { name: localStorage.getItem("item_name_editing"), vendor_email: vendor_email })
+            axios.post("api/vendor/getitem", { name: localStorage.getItem("item_name_editing"), vendor_email: vendor_email })
 
                 .then((response) => {
                     console.log(response.data[0]);
@@ -190,7 +186,7 @@ export default function FoodItems(props) {
         console.log(foodItem)
         console.log(foodItemPrice)
         axios
-            .put("http://localhost:4000/vendor/food_items", newFoodItem)
+            .put("api/vendor/food_items", newFoodItem)
             .then((response) => {
                 console.log(response);
                 localStorage.setItem("edit", "0");
@@ -334,15 +330,15 @@ export default function FoodItems(props) {
                                     </Select>
                                 </FormControl>
                             </Grid>
-                            <Grid item xs={12}>                            
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                            // onClick={handleChange}
-                            >
-                                Save Changes
-                            </Button>
+                            <Grid item xs={12}>
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                // onClick={handleChange}
+                                >
+                                    Save Changes
+                                </Button>
                             </Grid>
                         </Grid>
 

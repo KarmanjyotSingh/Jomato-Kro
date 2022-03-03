@@ -20,7 +20,7 @@ const UsersList = (props) => {
     useEffect(() => {
         console.log(localStorage.getItem("email"));
         axios
-            .post("http://localhost:4000/order/getstatecount", { vendor_email: localStorage.getItem("email") })
+            .post("api/order/getstatecount", { vendor_email: localStorage.getItem("email") })
             .then((res) => {
                 console.log(res.data);
                 setAccept(res.data.accept);
@@ -62,13 +62,13 @@ const UsersList = (props) => {
 
         // changes the state of the 
         axios
-            .put("http://localhost:4000/order/changestate", { _id: event.target.id, state: event.target.value })
+            .put("api/order/changestate", { _id: event.target.id, state: event.target.value })
             .then((res) => {
                 console.log(event.target.myText.vendor_email)
                 console.log(event.target.myText.buyer_email)
 
                 axios
-                    .put("http://localhost:4000/vendor/updateCount", { vendor_email: email, pending: pending })
+                    .put("api/vendor/updateCount", { vendor_email: email, pending: pending })
                     .then((res) => {
                         console.log(res)
                     })
@@ -95,7 +95,7 @@ const UsersList = (props) => {
         console.log(event.target.value);
 
         axios
-            .put("http://localhost:4000/order/changestate", { _id: event.target.id, state: "REJECTED" })
+            .put("api/order/changestate", { _id: event.target.id, state: "REJECTED" })
             .then((res) => {
                 console.log(res);
             })
@@ -108,7 +108,7 @@ const UsersList = (props) => {
 
     useEffect(() => {
         axios
-            .post("http://localhost:4000/order/getorder", { vendor_email: localStorage.getItem("email") })
+            .post("api/order/getorder", { vendor_email: localStorage.getItem("email") })
             .then((response) => {
                 setOrders(response.data);
             })

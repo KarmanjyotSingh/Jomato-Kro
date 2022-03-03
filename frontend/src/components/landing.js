@@ -2,8 +2,7 @@ import ls from "local-storage";
 
 return (
   <h3>
-    Jomato mein apka swagat h !!
-
+    Hello {ls.get("username")}. You are a {ls.get("user_type")}
   </h3>
 );
 

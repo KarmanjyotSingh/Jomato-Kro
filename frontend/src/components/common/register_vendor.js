@@ -99,7 +99,7 @@ export default function SignUp(props) {
     };
     console.log(newVendor);
     axios
-      .post("http://localhost:4000/vendor/register", newVendor)
+      .post("api/vendor/register", newVendor)
       .then((res) => {
         if (res.status === 200)
           alert("Registered Succesful")

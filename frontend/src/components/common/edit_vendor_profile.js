@@ -78,7 +78,7 @@ export default function SignUp(props) {
   React.useEffect(() => {
     if (user_email) {
       axios
-        .post("http://localhost:4000/vendor/profile", { email: user_email })
+        .post("api/vendor/profile", { email: user_email })
         .then((res) => {
           setName(res.data["manager_name"]);
           setEmail(res.data["email"]);
@@ -109,7 +109,7 @@ export default function SignUp(props) {
     };
     console.log(newVendor);
     axios
-      .put("http://localhost:4000/vendor/edit_profile", newVendor)
+      .put("api/vendor/edit_profile", newVendor)
       .then((res) => {
         console.log(res.data);
         localStorage.setItem("edit", "0");

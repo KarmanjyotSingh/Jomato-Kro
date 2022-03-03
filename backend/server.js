@@ -3,7 +3,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const PORT = 4000;
+const PORT = 8000;
 const DB_NAME = "tutorial";
 
 // routes
@@ -20,9 +20,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Connection to MongoDB
-mongoose.connect("mongodb://127.0.0.1:27017/" + DB_NAME, {
-  useNewUrlParser: true,
-});
+mongoose.connect(
+  "mongodb+srv://karman:karman1232@cluster0.ogq3d.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+);
 const connection = mongoose.connection;
 connection.once("open", function () {
   console.log("MongoDB database connection established successfully !");

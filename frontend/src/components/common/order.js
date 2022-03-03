@@ -52,7 +52,7 @@ const UsersList = (props) => {
         console.log(event.target.value);
 
         axios
-            .put("http://localhost:4000/order/changestate", { _id: event.target.id, state: event.target.value })
+            .put("api/order/changestate", { _id: event.target.id, state: event.target.value })
             .then((res) => {
                 console.log(res);
             })
@@ -61,7 +61,7 @@ const UsersList = (props) => {
             });
 
         axios
-            .post("http://localhost:4000/order/getstatecount", { vendor_email: localStorage.getItem("email"), status: "ACCEPTED" })
+            .post("api/order/getstatecount", { vendor_email: localStorage.getItem("email"), status: "ACCEPTED" })
             .then((res) => {
                 console.log("Accept Count : " + res.data);
                 setAccept(res.data);
@@ -70,7 +70,7 @@ const UsersList = (props) => {
                 console.log(err);
             });
         axios
-            .post("http://localhost:4000/order/getstatecount", { vendor_email: localStorage.getItem("email"), status: "COOKING" })
+            .post("api/order/getstatecount", { vendor_email: localStorage.getItem("email"), status: "COOKING" })
             .then((res) => {
                 console.log("Cooking Count   " + res.data);
                 setCook(res.data);
@@ -90,7 +90,7 @@ const UsersList = (props) => {
         console.log(event.target.value);
 
         axios
-            .put("http://localhost:4000/order/changestate", { _id: event.target.id, state: "REJECTED" })
+            .put("api/order/changestate", { _id: event.target.id, state: "REJECTED" })
             .then((res) => {
                 console.log(res);
             })
@@ -103,7 +103,7 @@ const UsersList = (props) => {
 
     useEffect(() => {
         axios
-            .post("http://localhost:4000/order/getorder", { vendor_email: localStorage.getItem("email") })
+            .post("api/order/getorder", { vendor_email: localStorage.getItem("email") })
             .then((response) => {
                 setOrders(response.data);
             })

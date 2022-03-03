@@ -21,7 +21,7 @@ const MenuProps = {
 
 React.useEffect(() => {
   axios
-    .get("http://localhost:4000/food/getaddon")
+    .get("api/food/getaddon")
     .then((response) => {
       let temp = foodtags;
       console.log(response.data);

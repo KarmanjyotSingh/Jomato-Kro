@@ -5,7 +5,7 @@ const Profile = (props) => {
   const [details, setDetails] = useState([]);
   useEffect(() => {
     axios
-      .get("http://localhost:4000/profile") // unimplemented
+      .get("api/profile") // unimplemented
       .then((response) => {
         setDetails(response.data);
       })

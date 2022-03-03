@@ -37,7 +37,7 @@ export default function Profile(props) {
   //   console.log("Here hehe" + userType);
   if (userType === "vendor") {
     axios
-      .post("http://localhost:4000/vendor/profile", { email: user_email })
+      .post("api/vendor/profile", { email: user_email })
       .then((response) => {
         setName(response.data.manager_name);
         setEmail(response.data.email);
@@ -91,7 +91,7 @@ export default function Profile(props) {
     );
   } else if (userType === "buyer") {
     axios
-      .post("http://localhost:4000/buyer/profile", { email: user_email })
+      .post("api/buyer/profile", { email: user_email })
 
       .then((response) => {
         setName(response.data.name);

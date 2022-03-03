@@ -20,7 +20,7 @@ export default function Wallet(props) {
 
   React.useEffect(() => {
     axios
-      .post("http://localhost:4000/buyer/wallet_balance", {
+      .post("api/buyer/wallet_balance", {
         email: user_email,
       })
       .then((res) => {
@@ -41,7 +41,7 @@ export default function Wallet(props) {
     };
     console.log(obj);
     axios
-      .put("http://localhost:4000/buyer/add_wallet_balance", obj)
+      .put("api/buyer/add_wallet_balance", obj)
       .then((res) => {
         if (res.error) {
           alert(res.error);

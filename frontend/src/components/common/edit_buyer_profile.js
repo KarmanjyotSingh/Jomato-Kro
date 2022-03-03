@@ -59,7 +59,7 @@ export default function SignUp(props) {
   React.useEffect(() => {
     if (user_email) {
       axios
-        .post("http://localhost:4000/buyer/profile", { email: user_email })
+        .post("api/buyer/profile", { email: user_email })
         .then((res) => {
           setName(res.data["name"]);
           setContact(res.data["contact_number"]);
@@ -90,7 +90,7 @@ export default function SignUp(props) {
     console.log(newBuyer);
 
     axios
-      .put("http://localhost:4000/buyer/edit_profile", newBuyer)
+      .put("api/buyer/edit_profile", newBuyer)
       .then((res) => {
         window.href = "/profile";
         localStorage.setItem("edit", "0");

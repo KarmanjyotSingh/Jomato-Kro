@@ -23,7 +23,7 @@ const UsersList = (props) => {
     localStorage.setItem("edit_menu", "0");
     useEffect(() => {
         axios
-            .post("http://localhost:4000/vendor/item_list", { email: localStorage.getItem("email") })
+            .post("api/vendor/item_list", { email: localStorage.getItem("email") })
             .then((response) => {
                 setUsers(response.data);
                 setSortedUsers(response.data);
@@ -37,7 +37,7 @@ const UsersList = (props) => {
     function handleDelete(props) {
         console.log(props.name);
         axios
-            .post("http://localhost:4000/vendor/remove_item", { name: props.name, vendor_email: localStorage.getItem("email") })
+            .post("api/vendor/remove_item", { name: props.name, vendor_email: localStorage.getItem("email") })
             .then((response) => {
                 window.location.reload();
             }

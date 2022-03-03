@@ -99,7 +99,7 @@ export default function SignUp(props) {
     // });
 
     axios
-      .post("http://localhost:4000/buyer/register", newBuyer)
+      .post("api/buyer/register", newBuyer)
       .then((res) => {
         console.log(res.data);
         //     resetInputs();

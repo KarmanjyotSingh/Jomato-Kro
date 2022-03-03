@@ -64,7 +64,7 @@ export default function Login(props) {
     };
     console.log(newUser);
     axios
-      .post("http://localhost:4000/login", newUser)
+      .post("api/login", newUser)
       .then((response) => {
         localStorage.setItem("email", newUser.email);
         localStorage.setItem("password", newUser.password);

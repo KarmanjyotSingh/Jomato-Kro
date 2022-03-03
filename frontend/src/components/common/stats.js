@@ -30,13 +30,13 @@ const UsersList = (props) => {
 
     useEffect(() => {
         axios
-            .post("http://localhost:4000/vendor/getSTATS", { email: localStorage.getItem("email") })
+            .post("api/vendor/getSTATS", { email: localStorage.getItem("email") })
             .then((response) => {
                 setPlaced(response.data.total);
                 setComplete(response.data.completed);
                 setPending(response.data.total - response.data.completed - response.data.cancelled);
 
-                axios.post("http://localhost:4000/order/orderstat", { vendor_email: localStorage.getItem("email") })
+                axios.post("api/order/orderstat", { vendor_email: localStorage.getItem("email") })
                     .then((response) => {
                         setOrder(response.data);
                     }
@@ -56,7 +56,7 @@ const UsersList = (props) => {
     function handleDelete(props) {
         console.log(props.name);
         axios
-            .post("http://localhost:4000/vendor/remove_item", { name: props.name, vendor_email: localStorage.getItem("email") })
+            .post("api/vendor/remove_item", { name: props.name, vendor_email: localStorage.getItem("email") })
             .then((response) => {
                 window.location.reload();
             }
